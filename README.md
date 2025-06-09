@@ -94,7 +94,7 @@ yarn dev
 
 ### Аутентификация
 
-![Login Flow](public/auth_scheme.svg)
+![Login Flow](assets/auth_scheme.svg)
 
 
 
