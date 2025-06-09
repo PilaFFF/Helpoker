@@ -1,4 +1,4 @@
-import { tokenService } from '@/shared/api'
+import { tokenService } from '@/shared/lib/token-service'
 import { makeAutoObservable } from 'mobx'
 
 class AuthStore {
