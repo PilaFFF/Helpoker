@@ -1,22 +1,16 @@
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
-import { useAuthMutation, handleLogin, handleFormFailed, type LoginFormData } from '@/features/auth'
+import { createLazyFileRoute, redirect } from '@tanstack/react-router'
 import { LoginForm } from '@/widgets'
+import { authStore } from '@/features/auth'
 
 export const Route = createLazyFileRoute('/login/')({
 	component: Login,
+	pendingComponent: () => {
+		if (authStore.isAuthenticated) {
+			throw redirect({ to: '/' })
+		}
+	},
 })
 
 function Login() {
-	const { mutateAsync, isPending } = useAuthMutation()
-	const navigate = useNavigate()
-
-	const onSubmit = async (values: LoginFormData) => {
-		await handleLogin({
-			values,
-			mutateAsync,
-			navigate,
-		})
-	}
-
-	return <LoginForm onSubmit={onSubmit} onError={handleFormFailed} isLoading={isPending} />
+	return <LoginForm />
 }
