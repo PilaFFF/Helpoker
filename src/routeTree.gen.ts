@@ -17,7 +17,10 @@ import { Route as IndexImport } from './routes/index'
 
 // Create Virtual Routes
 
+const TrainingIndexLazyImport = createFileRoute('/training/')()
+const TheoryIndexLazyImport = createFileRoute('/theory/')()
 const LoginIndexLazyImport = createFileRoute('/login/')()
+const CalculatorIndexLazyImport = createFileRoute('/calculator/')()
 
 // Create/Update Routes
 
@@ -27,11 +30,33 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const TrainingIndexLazyRoute = TrainingIndexLazyImport.update({
+  id: '/training/',
+  path: '/training/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/training/index.lazy').then((d) => d.Route),
+)
+
+const TheoryIndexLazyRoute = TheoryIndexLazyImport.update({
+  id: '/theory/',
+  path: '/theory/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/theory/index.lazy').then((d) => d.Route))
+
 const LoginIndexLazyRoute = LoginIndexLazyImport.update({
   id: '/login/',
   path: '/login/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/login/index.lazy').then((d) => d.Route))
+
+const CalculatorIndexLazyRoute = CalculatorIndexLazyImport.update({
+  id: '/calculator/',
+  path: '/calculator/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/calculator/index.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
@@ -44,11 +69,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/calculator/': {
+      id: '/calculator/'
+      path: '/calculator'
+      fullPath: '/calculator'
+      preLoaderRoute: typeof CalculatorIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/login/': {
       id: '/login/'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/theory/': {
+      id: '/theory/'
+      path: '/theory'
+      fullPath: '/theory'
+      preLoaderRoute: typeof TheoryIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/training/': {
+      id: '/training/'
+      path: '/training'
+      fullPath: '/training'
+      preLoaderRoute: typeof TrainingIndexLazyImport
       parentRoute: typeof rootRoute
     }
   }
@@ -58,37 +104,52 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/calculator': typeof CalculatorIndexLazyRoute
   '/login': typeof LoginIndexLazyRoute
+  '/theory': typeof TheoryIndexLazyRoute
+  '/training': typeof TrainingIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/calculator': typeof CalculatorIndexLazyRoute
   '/login': typeof LoginIndexLazyRoute
+  '/theory': typeof TheoryIndexLazyRoute
+  '/training': typeof TrainingIndexLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/calculator/': typeof CalculatorIndexLazyRoute
   '/login/': typeof LoginIndexLazyRoute
+  '/theory/': typeof TheoryIndexLazyRoute
+  '/training/': typeof TrainingIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths: '/' | '/calculator' | '/login' | '/theory' | '/training'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login/'
+  to: '/' | '/calculator' | '/login' | '/theory' | '/training'
+  id: '__root__' | '/' | '/calculator/' | '/login/' | '/theory/' | '/training/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CalculatorIndexLazyRoute: typeof CalculatorIndexLazyRoute
   LoginIndexLazyRoute: typeof LoginIndexLazyRoute
+  TheoryIndexLazyRoute: typeof TheoryIndexLazyRoute
+  TrainingIndexLazyRoute: typeof TrainingIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CalculatorIndexLazyRoute: CalculatorIndexLazyRoute,
   LoginIndexLazyRoute: LoginIndexLazyRoute,
+  TheoryIndexLazyRoute: TheoryIndexLazyRoute,
+  TrainingIndexLazyRoute: TrainingIndexLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -102,14 +163,26 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/login/"
+        "/calculator/",
+        "/login/",
+        "/theory/",
+        "/training/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/calculator/": {
+      "filePath": "calculator/index.lazy.tsx"
+    },
     "/login/": {
       "filePath": "login/index.lazy.tsx"
+    },
+    "/theory/": {
+      "filePath": "theory/index.lazy.tsx"
+    },
+    "/training/": {
+      "filePath": "training/index.lazy.tsx"
     }
   }
 }
