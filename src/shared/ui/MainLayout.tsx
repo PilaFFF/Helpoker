@@ -43,9 +43,7 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 			}}
 			className="min-h-screen p-4"
 			style={{
-				background: isDark
-					? 'linear-gradient(135deg, #111827 0%, #0f172a 100%)'
-					: 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)',
+				background: isDark ? '#131314' : 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)',
 			}}
 		>
 			<div className="max-w-7xl mx-auto">
@@ -58,9 +56,7 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 					</motion.div>
 
 					<div className="flex-1 min-w-0">
-						<div
-							className={`${isDark ? 'bg-gray-800 text-gray-100' : 'bg-[#fff] text-gray-900'} rounded-2xl shadow-lg p-6`}
-						>
+						<div className={`${isDark ? ' text-gray-100' : 'bg-[#fff] text-gray-900'} rounded-2xl shadow-lg p-6`}>
 							{title && (
 								<h1 className={`text-3xl font-bold mb-6 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{title}</h1>
 							)}

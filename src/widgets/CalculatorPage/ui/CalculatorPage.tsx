@@ -116,7 +116,7 @@ export const CalculatorPage = observer(() => {
 										) : (
 											<button
 												type="button"
-												className={`w-20 h-28 rounded-xl border ${activeSlot.type === 'board' && activeSlot.index === i ? 'border-indigo-500' : 'border-gray-300'} bg-white text-gray-500`}
+												className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'board' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300-[3px]'} bg-gray-300 shadow-inner text-gray-500`}
 												onClick={() => setActiveSlot({ type: 'board', index: i })}
 											>
 												{i < 3 ? 'Флоп' : i === 3 ? 'Тёрн' : 'Ривер'}
@@ -162,7 +162,8 @@ export const CalculatorPage = observer(() => {
 									) : (
 										<button
 											type="button"
-											className={`w-20 h-28 rounded-xl border ${activeSlot.type === 'hole' && activeSlot.index === i ? 'border-indigo-500' : 'border-gray-300'} bg-white text-gray-500`}
+											// Используем новый класс
+											className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'hole' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300'} bg-gray-300 shadow-inner text-gray-500`}
 											onClick={() => setActiveSlot({ type: 'hole', index: i })}
 										>
 											Выбрать
@@ -179,7 +180,6 @@ export const CalculatorPage = observer(() => {
 						<div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
 							{suits.map((s) => (
 								<div key={s} className="col-span-1 sm:col-span-2 flex flex-col items-center justify-center">
-									{/* <span className={classNames('text-4xl', getSuitColor(s))}>{suitToLabel(s)}</span> */}
 									<div className="flex flex-wrap gap-2 mt-2">
 										{ranks.map((r) => {
 											const card: Card = { rank: r, suit: s }
@@ -187,7 +187,13 @@ export const CalculatorPage = observer(() => {
 											return (
 												<Tooltip key={`${r}${s}`} title={disabled ? 'Выбрано' : 'Добавить'}>
 													<span>
-														<PlayingCard card={card} variant="small" disabled={disabled} onClick={() => onPick(card)} />
+														<PlayingCard
+															card={card}
+															variant="small"
+															disabled={disabled}
+															isDark={isDark}
+															onClick={() => onPick(card)}
+														/>
 													</span>
 												</Tooltip>
 											)

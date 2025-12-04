@@ -53,7 +53,7 @@ export const rankToLabel = (r: Rank): string =>
 	r <= Rank.Ten ? String(r) : r === Rank.Jack ? 'J' : r === Rank.Queen ? 'Q' : r === Rank.King ? 'K' : 'A'
 
 export const suitToLabel = (s: Suit): string =>
-	s === Suit.Spades ? '♠' : s === Suit.Hearts ? '♥' : s === Suit.Diamonds ? '♦' : '♣'
+	s === Suit.Spades ? '♠️' : s === Suit.Hearts ? '♥️' : s === Suit.Diamonds ? '♦️' : '♣️'
 export const getSuitColor = (suit: Suit): string =>
 	suit === Suit.Hearts || suit === Suit.Diamonds ? 'text-red-600' : 'text-gray-800'
 export const codeToCard = (code: string): Card => {

@@ -36,7 +36,7 @@ export const MenuCircles: FC<MenuCirclesProps> = ({ items }) => {
 								'hover:scale-105',
 								'border-t-[1.5px] border-t-indigo-100/70 border-b-[1px] border-b-gray-50/30',
 								{
-									'bg-indigo-500 text-white shadow-lg scale-110': isActive,
+									'bg-[#1e1f20] text-white shadow-lg scale-110': isActive,
 									'bg-white/90 text-gray-600 hover:bg-gray-50': !isActive,
 								},
 							)}
