@@ -55,7 +55,7 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 							{title && (
 								<h1 className={`text-3xl font-bold mb-6 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{title}</h1>
 							)}
-							<Card className="overflow-y-auto max-h-[calc(100vh-8rem)] scrollbar-none">{children}</Card>
+							<Card className="overflow-y-auto max-h-[calc(100vh-6rem)] scrollbar-none">{children}</Card>
 						</div>
 					</div>
 				</div>

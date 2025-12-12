@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Typography, Space } from 'antd'
-import { UserOutlined } from '@ant-design/icons'
 import { motion } from 'framer-motion'
 import { MainLayout } from '@/shared/ui'
 import { observer } from 'mobx-react-lite'

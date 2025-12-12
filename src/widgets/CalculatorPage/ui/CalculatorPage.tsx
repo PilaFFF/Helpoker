@@ -1,8 +1,8 @@
 import { MainLayout } from '@/shared/ui'
-import { Card as AntCard, Typography, Space, Button, Divider, Tooltip, Select } from 'antd'
+import { Typography, Space, Button, Divider, Tooltip, Select } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { makeDeck, removeCards, drawRandom } from '@/shared/lib/poker/deck'
-// Важно: HandCategory должен быть доступен для использования в handOptions
+
 import { HandCategory, ranks, suits } from '@/shared/lib/poker/types'
 import type { ActiveSlot, Card } from '@/shared/lib/poker/types'
 import { compareScores, evaluateSeven } from '@/shared/lib/poker/evaluator'
@@ -11,14 +11,10 @@ import { observer } from 'mobx-react-lite'
 import { themeStore } from '@/shared/lib/theme'
 import classNames from 'classnames'
 
-// 1. Определение типа для выбранной комбинации (может быть 0 или любая HandCategory)
 type TargetHandValue = 0 | HandCategory
 
-// 2. Опции выбора, использующие HandCategory
 const handOptions = [
-	{ value: 0 as TargetHandValue, label: 'Все комбинации' }, // 0 для "Все комбинации"
-	// Используем значения из HandCategory.
-	// Если HandCategory — это числовой enum, то value будет числом.
+	{ value: 0 as TargetHandValue, label: 'Все комбинации' },
 	{ value: HandCategory.StraightFlush as TargetHandValue, label: 'Стрит-Флеш / Роял-Флеш' },
 	{ value: HandCategory.FourKind as TargetHandValue, label: 'Каре' },
 	{ value: HandCategory.FullHouse as TargetHandValue, label: 'Фулл-Хаус' },
@@ -37,7 +33,6 @@ export const CalculatorPage = observer(() => {
 	const [board, setBoard] = useState<Array<Card | null>>([null, null, null, null, null])
 	const [activeSlot, setActiveSlot] = useState<ActiveSlot>({ type: 'hole', index: 0 })
 	const [trials, setTrials] = useState<number>(5000)
-	// 3. Используем новый тип TargetHandValue
 	const [targetHand, setTargetHand] = useState<TargetHandValue>(0)
 
 	const selectedSet = useMemo(() => {
@@ -105,7 +100,6 @@ export const CalculatorPage = observer(() => {
 
 			const myScore = evaluateSeven(h.concat(fullBoard))
 
-			// 4. Сравнение теперь работает, потому что targetHand имеет совместимый тип
 			const currentHandCategory = myScore.category
 
 			const isTargetHand = targetHand === 0 || currentHandCategory === targetHand
