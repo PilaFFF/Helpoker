@@ -1,16 +1,10 @@
 import { type FC, type ReactNode } from 'react'
-import {
-	HomeOutlined,
-	CalculatorOutlined,
-	BookOutlined,
-	AimOutlined,
-	SunOutlined,
-	MoonOutlined,
-} from '@ant-design/icons'
+import { SunOutlined, MoonOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
 import { motion } from 'framer-motion'
 import { MenuCircles } from '@/shared/ui/MenuCircles'
 import { themeStore } from '@/shared/lib/theme'
+import { Card } from 'antd'
 
 interface MainLayoutProps {
 	children: ReactNode
@@ -22,10 +16,11 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 	const isDark = themeStore.isDark
 
 	const menuItems = [
-		{ to: '/', icon: <HomeOutlined />, label: 'На главную' },
-		{ to: '/calculator', icon: <CalculatorOutlined />, label: 'Калькулятор' },
-		{ to: '/theory', icon: <BookOutlined />, label: 'Теория' },
-		{ to: '/training', icon: <AimOutlined />, label: 'Тренировка' },
+		{ to: '/', icon: <span>🏠︎</span>, label: 'На главную' },
+		{ to: '/musloto', icon: <span>🔊</span>, label: 'МузЛото' },
+		{ to: '/calculator', icon: <span>🧮</span>, label: 'Калькулятор' },
+		{ to: '/theory', icon: <span>📚</span>, label: 'Теория' },
+		{ to: '/training', icon: <span>🎯</span>, label: 'Тренировка' },
 		{
 			label: 'Тема',
 			action: () => themeStore.toggle(),
@@ -56,11 +51,11 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 					</motion.div>
 
 					<div className="flex-1 min-w-0">
-						<div className={`${isDark ? ' text-gray-100' : 'bg-[#fff] text-gray-900'} rounded-2xl shadow-lg p-6`}>
+						<div className={`${isDark ? ' text-gray-100' : ' text-gray-900'}`}>
 							{title && (
 								<h1 className={`text-3xl font-bold mb-6 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{title}</h1>
 							)}
-							<div className="overflow-y-auto max-h-[calc(100vh-9rem)] scrollbar-none">{children}</div>
+							<Card className="overflow-y-auto max-h-[calc(100vh-8rem)] scrollbar-none">{children}</Card>
 						</div>
 					</div>
 				</div>

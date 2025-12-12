@@ -19,6 +19,7 @@ import { Route as IndexImport } from './routes/index'
 
 const TrainingIndexLazyImport = createFileRoute('/training/')()
 const TheoryIndexLazyImport = createFileRoute('/theory/')()
+const MuslotoIndexLazyImport = createFileRoute('/musloto/')()
 const LoginIndexLazyImport = createFileRoute('/login/')()
 const CalculatorIndexLazyImport = createFileRoute('/calculator/')()
 
@@ -43,6 +44,12 @@ const TheoryIndexLazyRoute = TheoryIndexLazyImport.update({
   path: '/theory/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/theory/index.lazy').then((d) => d.Route))
+
+const MuslotoIndexLazyRoute = MuslotoIndexLazyImport.update({
+  id: '/musloto/',
+  path: '/musloto/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/musloto/index.lazy').then((d) => d.Route))
 
 const LoginIndexLazyRoute = LoginIndexLazyImport.update({
   id: '/login/',
@@ -83,6 +90,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/musloto/': {
+      id: '/musloto/'
+      path: '/musloto'
+      fullPath: '/musloto'
+      preLoaderRoute: typeof MuslotoIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/theory/': {
       id: '/theory/'
       path: '/theory'
@@ -106,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorIndexLazyRoute
   '/login': typeof LoginIndexLazyRoute
+  '/musloto': typeof MuslotoIndexLazyRoute
   '/theory': typeof TheoryIndexLazyRoute
   '/training': typeof TrainingIndexLazyRoute
 }
@@ -114,6 +129,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorIndexLazyRoute
   '/login': typeof LoginIndexLazyRoute
+  '/musloto': typeof MuslotoIndexLazyRoute
   '/theory': typeof TheoryIndexLazyRoute
   '/training': typeof TrainingIndexLazyRoute
 }
@@ -123,16 +139,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/calculator/': typeof CalculatorIndexLazyRoute
   '/login/': typeof LoginIndexLazyRoute
+  '/musloto/': typeof MuslotoIndexLazyRoute
   '/theory/': typeof TheoryIndexLazyRoute
   '/training/': typeof TrainingIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calculator' | '/login' | '/theory' | '/training'
+  fullPaths:
+    | '/'
+    | '/calculator'
+    | '/login'
+    | '/musloto'
+    | '/theory'
+    | '/training'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calculator' | '/login' | '/theory' | '/training'
-  id: '__root__' | '/' | '/calculator/' | '/login/' | '/theory/' | '/training/'
+  to: '/' | '/calculator' | '/login' | '/musloto' | '/theory' | '/training'
+  id:
+    | '__root__'
+    | '/'
+    | '/calculator/'
+    | '/login/'
+    | '/musloto/'
+    | '/theory/'
+    | '/training/'
   fileRoutesById: FileRoutesById
 }
 
@@ -140,6 +170,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalculatorIndexLazyRoute: typeof CalculatorIndexLazyRoute
   LoginIndexLazyRoute: typeof LoginIndexLazyRoute
+  MuslotoIndexLazyRoute: typeof MuslotoIndexLazyRoute
   TheoryIndexLazyRoute: typeof TheoryIndexLazyRoute
   TrainingIndexLazyRoute: typeof TrainingIndexLazyRoute
 }
@@ -148,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalculatorIndexLazyRoute: CalculatorIndexLazyRoute,
   LoginIndexLazyRoute: LoginIndexLazyRoute,
+  MuslotoIndexLazyRoute: MuslotoIndexLazyRoute,
   TheoryIndexLazyRoute: TheoryIndexLazyRoute,
   TrainingIndexLazyRoute: TrainingIndexLazyRoute,
 }
@@ -165,6 +197,7 @@ export const routeTree = rootRoute
         "/",
         "/calculator/",
         "/login/",
+        "/musloto/",
         "/theory/",
         "/training/"
       ]
@@ -177,6 +210,9 @@ export const routeTree = rootRoute
     },
     "/login/": {
       "filePath": "login/index.lazy.tsx"
+    },
+    "/musloto/": {
+      "filePath": "musloto/index.lazy.tsx"
     },
     "/theory/": {
       "filePath": "theory/index.lazy.tsx"

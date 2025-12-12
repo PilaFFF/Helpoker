@@ -32,8 +32,8 @@ const App = observer(() => {
 
 	const tokens = themeStore.isDark
 		? {
-				colorBgBase: 'red',
-				colorBgLayout: 'red',
+				colorBgBase: '#1e1f20',
+				colorBgLayout: '#1e1f20',
 				colorBgContainer: '#1e1f20',
 				colorText: '#e5e7eb',
 				colorTextSecondary: '#94a3b8',
@@ -44,7 +44,7 @@ const App = observer(() => {
 				colorBgBase: '#f8fafc',
 				colorBgLayout: '#f8fafc',
 				colorBgContainer: '#ffffff',
-				colorText: 'red',
+				colorText: '#333',
 				colorTextSecondary: '#6b7280',
 				colorTextHeading: '#111827',
 				borderRadiusLG: 16,

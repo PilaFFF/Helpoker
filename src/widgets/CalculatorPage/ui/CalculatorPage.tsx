@@ -138,75 +138,25 @@ export const CalculatorPage = observer(() => {
 	return (
 		<MainLayout title="Калькулятор Equity">
 			<Space direction="vertical" size="large" className="w-full">
-				<AntCard>
-					<Space direction="vertical" size="middle" className="w-full">
-						<Typography.Title level={4} className="!m-0">
-							Борд
-						</Typography.Title>
-						<div className="flex gap-10 justify-between">
-							<div className="flex gap-3">
-								{board.map((card, i) => (
-									<div key={`b${i}`} className="flex items-center gap-2">
-										{card ? (
-											<div className="flex flex-col">
-												<PlayingCard
-													card={card}
-													variant="large"
-													selected={activeSlot.type === 'board' && activeSlot.index === i}
-													onClick={() => setActiveSlot({ type: 'board', index: i })}
-												/>
-
-												{card && (
-													<Button size="small" type="text" onClick={() => clearSlot('board', i)}>
-														Очистить
-													</Button>
-												)}
-											</div>
-										) : (
-											<button
-												type="button"
-												className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'board' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300-[3px]'} bg-gray-300 shadow-inner text-gray-500`}
-												onClick={() => setActiveSlot({ type: 'board', index: i })}
-											>
-												{i < 3 ? 'Флоп' : i === 3 ? 'Тёрн' : 'Ривер'}
-											</button>
-										)}
-									</div>
-								))}
-							</div>
-
-							<div
-								className={classNames('flex flex-col flex-1 shadow-inner px-8 rounded-xl border-[1px]', {
-									'border-green-200 bg-green-300': !isDark,
-									'border-green-800 bg-green-950': isDark,
-								})}
-							>
-								<Typography.Title level={4} className="!mt-4">
-									Equity: {(result.equity * 100).toFixed(1)}%
-								</Typography.Title>
-								<Typography.Text type="secondary">Против случайного оппонента, прогонов: {result.runs}</Typography.Text>
-								<Typography.Text type="secondary">
-									**Комбинация: {result.targetHandLabel}** ({result.filteredRuns} прогонов)
-								</Typography.Text>
-							</div>
-						</div>
-						<Divider className="!my-2" />
-						<Typography.Title level={4} className="!m-0">
-							Ваши карты
-						</Typography.Title>
+				<Space direction="vertical" size="middle" className="w-full">
+					<Typography.Title level={4} className="!m-0">
+						Борд
+					</Typography.Title>
+					<div className="flex gap-10 justify-between">
 						<div className="flex gap-3">
-							{hole.map((c, i) => (
-								<div key={`h${i}`} className="flex items-center gap-2">
-									{c ? (
+							{board.map((card, i) => (
+								<div key={`b${i}`} className="flex items-center gap-2">
+									{card ? (
 										<div className="flex flex-col">
 											<PlayingCard
-												card={c}
+												card={card}
 												variant="large"
-												selected={activeSlot.type === 'hole' && activeSlot.index === i}
-												onClick={() => setActiveSlot({ type: 'hole', index: i })}
+												selected={activeSlot.type === 'board' && activeSlot.index === i}
+												onClick={() => setActiveSlot({ type: 'board', index: i })}
 											/>
-											{c && (
-												<Button size="small" type="text" onClick={() => clearSlot('hole', i)}>
+
+											{card && (
+												<Button size="small" type="text" onClick={() => clearSlot('board', i)}>
 													Очистить
 												</Button>
 											)}
@@ -214,67 +164,115 @@ export const CalculatorPage = observer(() => {
 									) : (
 										<button
 											type="button"
-											className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'hole' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300'} bg-gray-300 shadow-inner text-gray-500`}
-											onClick={() => setActiveSlot({ type: 'hole', index: i })}
+											className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'board' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300-[3px]'} bg-gray-300 shadow-inner text-gray-500`}
+											onClick={() => setActiveSlot({ type: 'board', index: i })}
 										>
-											Выбрать
+											{i < 3 ? 'Флоп' : i === 3 ? 'Тёрн' : 'Ривер'}
 										</button>
 									)}
 								</div>
 							))}
 						</div>
 
-						<Divider className="!my-2" />
-						<Space direction="horizontal" align="center">
-							<Typography.Title level={5} className="!m-0">
-								Эквити для комбинации:
+						<div
+							className={classNames('flex flex-col flex-1 shadow-inner px-8 rounded-xl border-[1px]', {
+								'border-green-200 bg-green-300': !isDark,
+								'border-green-800 bg-green-950': isDark,
+							})}
+						>
+							<Typography.Title level={4} className="!mt-4">
+								Equity: {(result.equity * 100).toFixed(1)}%
 							</Typography.Title>
-							<Select
-								value={targetHand}
-								onChange={(value: TargetHandValue) => setTargetHand(value)}
-								style={{ width: 250 }}
-								options={handOptions}
-							/>
-						</Space>
-
-						<Divider className="!my-2" />
-						<Typography.Title level={5} className="!m-0">
-							Выбор карты
-						</Typography.Title>
-						<div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
-							{suits.map((s) => (
-								<div key={s} className="col-span-1 sm:col-span-2 flex flex-col items-center justify-center">
-									<div className="flex flex-wrap gap-2 mt-2">
-										{ranks.map((r) => {
-											const card: Card = { rank: r, suit: s }
-											const disabled = selectedSet.has(`${card.rank}${card.suit}`)
-											return (
-												<Tooltip key={`${r}${s}`} title={disabled ? 'Выбрано' : 'Добавить'}>
-													<span>
-														<PlayingCard
-															card={card}
-															variant="small"
-															disabled={disabled}
-															isDark={isDark}
-															onClick={() => onPick(card)}
-														/>
-													</span>
-												</Tooltip>
-											)
-										})}
-									</div>
-								</div>
-							))}
+							<Typography.Text type="secondary">Против случайного оппонента, прогонов: {result.runs}</Typography.Text>
+							<Typography.Text type="secondary">
+								**Комбинация: {result.targetHandLabel}** ({result.filteredRuns} прогонов)
+							</Typography.Text>
 						</div>
+					</div>
+					<Divider className="!my-2" />
+					<Typography.Title level={4} className="!m-0">
+						Ваши карты
+					</Typography.Title>
+					<div className="flex gap-3">
+						{hole.map((c, i) => (
+							<div key={`h${i}`} className="flex items-center gap-2">
+								{c ? (
+									<div className="flex flex-col">
+										<PlayingCard
+											card={c}
+											variant="large"
+											selected={activeSlot.type === 'hole' && activeSlot.index === i}
+											onClick={() => setActiveSlot({ type: 'hole', index: i })}
+										/>
+										{c && (
+											<Button size="small" type="text" onClick={() => clearSlot('hole', i)}>
+												Очистить
+											</Button>
+										)}
+									</div>
+								) : (
+									<button
+										type="button"
+										className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'hole' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300'} bg-gray-300 shadow-inner text-gray-500`}
+										onClick={() => setActiveSlot({ type: 'hole', index: i })}
+									>
+										Выбрать
+									</button>
+								)}
+							</div>
+						))}
+					</div>
 
-						<Divider />
-						<Space>
-							<Typography.Text>Сэмплов: {trials}</Typography.Text>
-							<Button onClick={() => setTrials((t) => Math.min(20000, t + 2000))}>+2000</Button>
-							<Button onClick={() => setTrials((t) => Math.max(1000, t - 2000))}>-2000</Button>
-						</Space>
+					<Divider className="!my-2" />
+					<Space direction="horizontal" align="center">
+						<Typography.Title level={5} className="!m-0">
+							Эквити для комбинации:
+						</Typography.Title>
+						<Select
+							value={targetHand}
+							onChange={(value: TargetHandValue) => setTargetHand(value)}
+							style={{ width: 250 }}
+							options={handOptions}
+						/>
 					</Space>
-				</AntCard>
+
+					<Divider className="!my-2" />
+					<Typography.Title level={5} className="!m-0">
+						Выбор карты
+					</Typography.Title>
+					<div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+						{suits.map((s) => (
+							<div key={s} className="col-span-1 sm:col-span-2 flex flex-col items-center justify-center">
+								<div className="flex flex-wrap gap-2 mt-2">
+									{ranks.map((r) => {
+										const card: Card = { rank: r, suit: s }
+										const disabled = selectedSet.has(`${card.rank}${card.suit}`)
+										return (
+											<Tooltip key={`${r}${s}`} title={disabled ? 'Выбрано' : 'Добавить'}>
+												<span>
+													<PlayingCard
+														card={card}
+														variant="small"
+														disabled={disabled}
+														isDark={isDark}
+														onClick={() => onPick(card)}
+													/>
+												</span>
+											</Tooltip>
+										)
+									})}
+								</div>
+							</div>
+						))}
+					</div>
+
+					<Divider />
+					<Space>
+						<Typography.Text>Сэмплов: {trials}</Typography.Text>
+						<Button onClick={() => setTrials((t) => Math.min(20000, t + 2000))}>+2000</Button>
+						<Button onClick={() => setTrials((t) => Math.max(1000, t - 2000))}>-2000</Button>
+					</Space>
+				</Space>
 			</Space>
 		</MainLayout>
 	)
