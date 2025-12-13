@@ -26,7 +26,7 @@ const RouteComponent = observer(function RouteComponent() {
 						>
 							<div className="ml-4">
 								<Title level={2}>Главная страница</Title>
-								<Text type="secondary">Добро пожаловать</Text>
+								<Text type="secondary">Добро пожаловать ▄︻デ══━一💥</Text>
 							</div>
 						</motion.div>
 					</motion.div>
@@ -38,7 +38,7 @@ const RouteComponent = observer(function RouteComponent() {
 						}}
 						className="grid grid-cols-1 md:grid-cols-3"
 					>
-						{['🔊 МузЛото', '🧮 Калькулятор', '📚 Теория', '🎯 Тренировка'].map((title, idx) => (
+						{['🔊 МузЛото', '📟 Калькулятор', '📚 Теория', '🎯 Тренировка'].map((title, idx) => (
 							<motion.div
 								key={title}
 								animate={{
@@ -54,7 +54,7 @@ const RouteComponent = observer(function RouteComponent() {
 								<Text type="secondary">
 									{title === '🔊 МузЛото'
 										? 'Сыграйте в музальное лото!'
-										: title === '🧮 Калькулятор'
+										: title === '📟 Калькулятор'
 											? 'Узнайте каков ваш шанс забрать выигрыш'
 											: title === '📚 Теория'
 												? 'Формулы, примеры, советы'

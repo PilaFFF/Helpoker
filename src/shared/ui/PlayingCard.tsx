@@ -11,7 +11,7 @@ interface PlayingCardProps {
 	onClick?: () => void
 }
 
-export const PlayingCard: FC<PlayingCardProps> = ({ card, variant, selected, disabled, isDark, onClick }) => {
+export const PlayingCard: FC<PlayingCardProps> = ({ card, variant, selected, disabled, onClick }) => {
 	const isSmall = variant === 'small'
 	const base = classNames(
 		'relative inline-flex items-center justify-center rounded-xl border transition-all select-none',
