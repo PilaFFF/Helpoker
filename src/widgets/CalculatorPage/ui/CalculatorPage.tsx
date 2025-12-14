@@ -146,8 +146,8 @@ export const CalculatorPage = observer(() => {
 					<Typography.Title level={4} className="!m-0">
 						Борд
 					</Typography.Title>
-					<div className="flex gap-10 justify-between">
-						<div className="flex gap-3">
+					<div className="flex flex-col lg:flex-row gap-4 lg:gap-10 lg:justify-between">
+						<div className="flex gap-2 sm:gap-3 flex-wrap">
 							{board.map((card, i) => (
 								<div key={`b${i}`} className="flex items-center gap-2">
 									{card ? (
@@ -168,7 +168,7 @@ export const CalculatorPage = observer(() => {
 									) : (
 										<button
 											type="button"
-											className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'board' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300-[3px]'} bg-gray-300 shadow-inner text-gray-500`}
+											className={`w-16 h-22 sm:w-20 sm:h-28 rounded-xl border transition-colors duration-300 text-xs sm:text-sm ${activeSlot.type === 'board' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300-[3px]'} bg-gray-300 shadow-inner text-gray-500`}
 											onClick={() => setActiveSlot({ type: 'board', index: i })}
 										>
 											{i < 3 ? 'Флоп' : i === 3 ? 'Тёрн' : 'Ривер'}
@@ -177,55 +177,60 @@ export const CalculatorPage = observer(() => {
 								</div>
 							))}
 						</div>
-						<div className="flex flex-col flex-1">
+						<div className="flex flex-col flex-1 min-w-0">
 							<div
-								className={classNames('flex flex-1 shadow-inner p-4 rounded-xl border-[1px]', {
-									'border-green-200 bg-green-300': !isDark,
-									'border-green-800 bg-green-950': isDark,
-								})}
+								className={classNames(
+									'flex flex-col lg:flex-row flex-1 shadow-inner p-4 rounded-xl border-[1px] gap-4',
+									{
+										'border-green-200 bg-green-300': !isDark,
+										'border-green-800 bg-green-950': isDark,
+									},
+								)}
 							>
-								<div className="flex flex-col">
-									<Typography.Title level={4} className="!mt-4">
+								<div className="flex flex-col flex-1">
+									<Typography.Title level={4} className="!mt-0 lg:!mt-4">
 										Equity: {(result.equity * 100).toFixed(1)}%
 									</Typography.Title>
-									<Typography.Text>Против случайного оппонента, прогонов: {result.runs}</Typography.Text>
-									<Typography.Text>
+									<Typography.Text className="text-xs sm:text-sm">
+										Против случайного оппонента, прогонов: {result.runs}
+									</Typography.Text>
+									<Typography.Text className="text-xs sm:text-sm">
 										**Комбинация: {result.targetHandLabel}** ({result.filteredRuns} прогонов)
 									</Typography.Text>
 									{potOdds > 0 && (
-										<Typography.Text className="!mt-2">Шансы банка: {(potOdds * 100).toFixed(1)}%</Typography.Text>
+										<Typography.Text className="!mt-2 text-xs sm:text-sm">
+											Шансы банка: {(potOdds * 100).toFixed(1)}%
+										</Typography.Text>
 									)}
 								</div>
 
 								{recommendation && (
 									<div
-										className={classNames('mt-4 p-4 rounded-lg border-[1px] self-center', {
-											'border-green-500 bg-green-100': recommendation.shouldCall && !isDark,
-											'border-green-700 bg-green-900': recommendation.shouldCall && isDark,
-											'border-red-500 bg-red-100': !recommendation.shouldCall && !isDark,
-											'border-red-700 bg-red-900': !recommendation.shouldCall && isDark,
-										})}
+										className={classNames(
+											'mt-2 lg:mt-4 p-3 lg:p-4 rounded-lg border-[1px] lg:self-center w-full lg:w-auto',
+											{
+												'border-green-500 bg-green-100': recommendation.shouldCall && !isDark,
+												'border-green-700 bg-green-900': recommendation.shouldCall && isDark,
+												'border-red-500 bg-red-100': !recommendation.shouldCall && !isDark,
+												'border-red-700 bg-red-900': !recommendation.shouldCall && isDark,
+											},
+										)}
 									>
-										<Typography.Title level={5} className="!m-0 !mb-2">
+										<Typography.Title level={5} className="!m-0 !mb-2 text-sm lg:text-base">
 											Рекомендация: {recommendation.action}
 										</Typography.Title>
-										<Typography.Text>{recommendation.reason}</Typography.Text>
+										<Typography.Text className="text-xs sm:text-sm">{recommendation.reason}</Typography.Text>
 									</div>
 								)}
 							</div>
-							{/* <div className="">
-								<Typography.Text>Сэмплов: {trials}</Typography.Text>
-								<Button onClick={() => setTrials((t) => Math.min(20000, t + 2000))}>+2000</Button>
-								<Button onClick={() => setTrials((t) => Math.max(1000, t - 2000))}>-2000</Button>
-							</div> */}
 						</div>
 					</div>
 					<Divider className="!my-2" />
 					<Typography.Title level={4} className="!m-0">
 						Ваши карты
 					</Typography.Title>
-					<div className="flex gap-10">
-						<div className="flex gap-3">
+					<div className="flex flex-col lg:flex-row gap-4 lg:gap-10">
+						<div className="flex gap-2 sm:gap-3">
 							{hole.map((c, i) => (
 								<div key={`h${i}`} className="flex items-center gap-2">
 									{c ? (
@@ -245,7 +250,7 @@ export const CalculatorPage = observer(() => {
 									) : (
 										<button
 											type="button"
-											className={`w-20 h-28 rounded-xl border transition-colors duration-300 ${activeSlot.type === 'hole' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300'} bg-gray-300 shadow-inner text-gray-500`}
+											className={`w-16 h-22 sm:w-20 sm:h-28 rounded-xl border transition-colors duration-300 text-xs sm:text-sm ${activeSlot.type === 'hole' && activeSlot.index === i ? 'border-indigo-500 border-[2px] bg-white' : 'border-gray-300'} bg-gray-300 shadow-inner text-gray-500`}
 											onClick={() => setActiveSlot({ type: 'hole', index: i })}
 										>
 											Выбрать
@@ -254,37 +259,37 @@ export const CalculatorPage = observer(() => {
 								</div>
 							))}
 						</div>
-						<div className="flex flex-col gap-4">
-							<Space direction="horizontal" align="center" wrap>
-								<Typography.Title level={5} className="!m-0">
+						<div className="flex flex-col gap-3 sm:gap-4 flex-1">
+							<Space direction="vertical" size="small" className="w-full sm:flex-row sm:items-center">
+								<Typography.Title level={5} className="!m-0 text-sm sm:text-base">
 									Эквити для комбинации:
 								</Typography.Title>
 								<Select
 									value={targetHand}
 									onChange={(value: TargetHandValue) => setTargetHand(value)}
-									style={{ width: 250 }}
+									style={{ width: '100%', maxWidth: 250 }}
 									options={handOptions}
 								/>
 							</Space>
-							<Space direction="horizontal" align="center" wrap>
-								<Typography.Title level={5} className="!m-0">
+							<Space direction="vertical" size="small" className="w-full sm:flex-row sm:items-center" wrap>
+								<Typography.Title level={5} className="!m-0 text-sm sm:text-base">
 									Банк:
 								</Typography.Title>
 								<InputNumber
 									min={0}
 									value={potSize}
 									onChange={(value) => setPotSize(value ?? 0)}
-									style={{ width: 150 }}
+									style={{ width: '100%', maxWidth: 150 }}
 									addonAfter="💎"
 								/>
-								<Typography.Title level={5} className="!m-0">
+								<Typography.Title level={5} className="!m-0 text-sm sm:text-base">
 									Ставка:
 								</Typography.Title>
 								<InputNumber
 									min={0}
 									value={betSize}
 									onChange={(value) => setBetSize(value ?? 0)}
-									style={{ width: 150 }}
+									style={{ width: '100%', maxWidth: 150 }}
 									addonAfter="💎"
 								/>
 							</Space>
@@ -295,10 +300,10 @@ export const CalculatorPage = observer(() => {
 					<Typography.Title level={5} className="!m-0">
 						Выбор карты
 					</Typography.Title>
-					<div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
+					<div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 sm:gap-3">
 						{suits.map((s) => (
-							<div key={s} className="col-span-1 sm:col-span-2 flex flex-col items-center justify-center">
-								<div className="flex flex-wrap gap-2 mt-2">
+							<div key={s} className="col-span-1 flex flex-col items-center justify-center">
+								<div className="flex flex-wrap gap-1 sm:gap-2 mt-2 justify-center">
 									{ranks.map((r) => {
 										const card: Card = { rank: r, suit: s }
 										const disabled = selectedSet.has(`${card.rank}${card.suit}`)
