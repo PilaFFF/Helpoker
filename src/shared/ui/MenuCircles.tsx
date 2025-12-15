@@ -34,7 +34,7 @@ export const MenuCircles: FC<MenuCirclesProps> = ({ items }) => {
 							className={classNames(
 								'relative w-12 h-12 flex items-center justify-center rounded-full text-2xl transition-all duration-200 hover:scale-105',
 								{
-									'text-white shadow-lg scale-110 border-t-[1.5px] border-t-red-300/70 border-b-[1px] border-b-red-100/30':
+									'text-white shadow-lg scale-110 border-t-[1.5px] border-t-indigo-100/70 border-b-[1px] border-b-gray-50/30':
 										isActive,
 									'text-gray-600 hover:bg-gray-300 border-t-[1.5px] border-t-indigo-100/70 border-b-[1px] border-b-gray-50/30':
 										!isActive,
