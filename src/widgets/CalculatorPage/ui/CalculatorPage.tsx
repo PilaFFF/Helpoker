@@ -260,7 +260,7 @@ export const CalculatorPage = observer(() => {
 							))}
 						</div>
 						<div className="flex flex-col gap-3 sm:gap-4 flex-1">
-							<Space direction="vertical" size="small" className="w-full sm:flex-row sm:items-center">
+							<div className="w-full sm:flex-row sm:items-center">
 								<Typography.Title level={5} className="!m-0 text-sm sm:text-base">
 									Эквити для комбинации:
 								</Typography.Title>
@@ -270,8 +270,8 @@ export const CalculatorPage = observer(() => {
 									style={{ width: '100%', maxWidth: 250 }}
 									options={handOptions}
 								/>
-							</Space>
-							<Space direction="vertical" size="small" className="w-full sm:flex-row sm:items-center" wrap>
+							</div>
+							<div className="w-full sm:flex-row sm:items-center">
 								<Typography.Title level={5} className="!m-0 text-sm sm:text-base">
 									Банк:
 								</Typography.Title>
@@ -279,7 +279,7 @@ export const CalculatorPage = observer(() => {
 									min={0}
 									value={potSize}
 									onChange={(value) => setPotSize(value ?? 0)}
-									style={{ width: '100%', maxWidth: 150 }}
+									className="flex-1"
 									addonAfter="💎"
 								/>
 								<Typography.Title level={5} className="!m-0 text-sm sm:text-base">
@@ -289,10 +289,10 @@ export const CalculatorPage = observer(() => {
 									min={0}
 									value={betSize}
 									onChange={(value) => setBetSize(value ?? 0)}
-									style={{ width: '100%', maxWidth: 150 }}
+									className="flex-1"
 									addonAfter="💎"
 								/>
-							</Space>
+							</div>
 						</div>
 					</div>
 

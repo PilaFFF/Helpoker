@@ -30,29 +30,25 @@ export const MenuCircles: FC<MenuCirclesProps> = ({ items }) => {
 				return (
 					<Tooltip key={idx} title={item.label} placement="right">
 						<motion.button
-							key={idx}
 							onClick={() => (isRouteItem ? navigate({ to: item.to! }) : item.action?.())}
 							className={classNames(
-								'relative w-12 !h-12 flex rounded-full items-center justify-center text-2xl transition-all duration-200',
-								'hover:scale-105',
-
+								'relative w-12 h-12 flex items-center justify-center rounded-full text-2xl transition-all duration-200 hover:scale-105',
 								{
 									'text-white shadow-lg scale-110 border-t-[1.5px] border-t-red-300/70 border-b-[1px] border-b-red-100/30':
 										isActive,
-									'text-gray-600 hover:bg-[#8a8989] border-t-[1.5px] border-t-indigo-100/70 border-b-[1px] border-b-gray-50/30':
+									'text-gray-600 hover:bg-gray-300 border-t-[1.5px] border-t-indigo-100/70 border-b-[1px] border-b-gray-50/30':
 										!isActive,
 								},
 							)}
 							animate={{
 								y: [20, 0],
 								opacity: [0, 1],
-								transition: { ease: ['easeOut'], duration: 0.1, delay: idx * 0.2 },
+								transition: { duration: 0.1, delay: idx * 0.2 },
 							}}
 						>
 							{isActive ? (item.iconActive ?? item.icon) : item.icon}
-
 							{isActive && isRouteItem && (
-								<span className="absolute -bottom-1 border-[0.5px] border-gray-100/50 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-indigo-600 rounded-full" />
+								<span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 bg-indigo-600 rounded-full" />
 							)}
 						</motion.button>
 					</Tooltip>

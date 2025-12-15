@@ -34,17 +34,17 @@ export const Step2Card = observer(() => {
 					<strong>Ривер</strong> - 5-я карта (индекс 4)
 				</li>
 			</ul>
-			<div className="flex gap-3 my-4">
+			<div className="flex gap-3 my-4 flex-wrap">
 				{exampleBoard.map((card, i) =>
 					card ? (
 						<div key={`board-${i}`} className="flex flex-col items-center">
-							<PlayingCard card={card} variant="large" />
+							<PlayingCard card={card} variant="small" />
 							<span className="text-xs mt-1 text-gray-500">{i < 3 ? 'Флоп' : i === 3 ? 'Тёрн' : 'Ривер'}</span>
 						</div>
 					) : (
 						<div
 							key={`board-empty-${i}`}
-							className="w-20 h-28 rounded-xl border border-gray-300 bg-gray-200 flex items-center justify-center text-gray-400"
+							className="w-12 h-16 rounded-xl border border-gray-300 bg-gray-200 flex items-center justify-center text-gray-400"
 						>
 							{i < 3 ? 'Флоп' : i === 3 ? 'Тёрн' : 'Ривер'}
 						</div>
