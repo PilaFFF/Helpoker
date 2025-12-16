@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import classNames from 'classnames'
-import { useEffect, useState, type FC } from 'react'
+import { type FC, useEffect, useRef, useState } from 'react'
 
 interface MenuItem {
 	to?: string
@@ -12,25 +12,40 @@ interface MenuItem {
 
 interface MobileBottomMenuProps {
 	items: MenuItem[]
+	scrollContainerRef?: React.RefObject<HTMLElement | null>
 }
 
-export const MobileBottomMenu: FC<MobileBottomMenuProps> = ({ items }) => {
+export const MobileBottomMenu: FC<MobileBottomMenuProps> = ({ items, scrollContainerRef }) => {
 	const location = useLocation()
 	const navigate = useNavigate()
+
 	const [visible, setVisible] = useState(true)
+	const lastScrollTop = useRef(0)
 
 	useEffect(() => {
-		let lastScroll = window.scrollY
+		const container = scrollContainerRef?.current
+		if (!container) return
 
-		const handleScroll = () => {
-			const currentScroll = window.scrollY
-			setVisible(currentScroll < lastScroll || currentScroll < 100)
-			lastScroll = currentScroll
+		const onScroll = () => {
+			const currentScrollTop = container.scrollTop
+			const delta = 8 // чувствительность
+
+			if (currentScrollTop > lastScrollTop.current + delta) {
+				// скролл вниз — скрываем
+				setVisible(false)
+			} else if (currentScrollTop < lastScrollTop.current - delta) {
+				// скролл вверх — показываем
+				setVisible(true)
+			}
+
+			lastScrollTop.current = currentScrollTop
 		}
 
-		window.addEventListener('scroll', handleScroll)
-		return () => window.removeEventListener('scroll', handleScroll)
-	}, [])
+		container.addEventListener('scroll', onScroll, { passive: true })
+		return () => {
+			container.removeEventListener('scroll', onScroll)
+		}
+	}, [scrollContainerRef])
 
 	return (
 		<div

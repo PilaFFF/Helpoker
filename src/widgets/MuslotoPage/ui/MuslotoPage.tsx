@@ -149,7 +149,7 @@ export const MuslotoPage = observer(() => {
 
 	return (
 		<MainLayout>
-			<div className="flex flex-col items-center justify-center space-y-12 px-6 max-w-4xl mx-auto">
+			<div className="flex flex-col items-center justify-center space-y-12 max-w-4xl mx-auto">
 				<motion.div
 					className={`text-9xl font-black tabular-nums ${isDark ? 'text-white' : 'text-gray-900'}`}
 					animate={isAnimating ? { rotate: [0, 360], scale: [1, 1.3, 1], opacity: [1, 0.7, 1] } : {}}

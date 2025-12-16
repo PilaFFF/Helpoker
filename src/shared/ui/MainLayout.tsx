@@ -1,12 +1,11 @@
-import { type FC, type ReactNode } from 'react'
+import { useRef, type FC, type ReactNode } from 'react'
 import { SunOutlined, MoonOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react-lite'
 import { motion } from 'framer-motion'
-import { MenuCircles } from '@/shared/ui/MenuCircles'
-
 import { themeStore } from '@/shared/lib/theme'
 import { Card } from 'antd'
 import { MobileBottomMenu } from './MobileBottomMenu'
+import { MenuCircles } from './MenuCircles'
 
 interface MainLayoutProps {
 	children: ReactNode
@@ -16,6 +15,7 @@ interface MainLayoutProps {
 
 export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) => {
 	const isDark = themeStore.isDark
+	const scrollRef = useRef<HTMLDivElement | null>(null)
 
 	const menuItems = [
 		{ to: '/', icon: <span>🏠</span>, label: 'На главную' },
@@ -33,40 +33,31 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 
 	return (
 		<motion.div
-			animate={{
-				opacity: [0, 1],
-				y: [20, 0],
-				transition: { ease: 'easeInOut', duration: 0.5 },
-			}}
-			className="min-h-screen p-4 pb-24" // pb-24 чтобы контент не перекрывался мобильным меню
+			className="min-h-screen p-4 pb-24"
 			style={{
 				background: isDark ? '#131314' : 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)',
 			}}
 		>
 			<div className="max-w-7xl mx-auto">
 				<div className="flex gap-4">
-					{/* Десктопное боковое меню */}
 					<motion.div
 						className="sticky top-6 self-start flex-shrink-0 hidden md:block"
 						animate={{ scale: [0.95, 1], opacity: [0, 1], transition: { duration: 0.6 } }}
 					>
 						<MenuCircles items={menuItems} />
 					</motion.div>
-
-					{/* Контент */}
 					<div className="flex-1 min-w-0">
-						<div className={isDark ? 'text-gray-100' : 'text-gray-900'}>
-							{title && (
-								<h1 className={`text-3xl font-bold mb-6 ${isDark ? 'text-gray-100' : 'text-gray-900'}`}>{title}</h1>
-							)}
-							<Card className="overflow-y-auto max-h-[calc(100vh-6rem)] scrollbar-none">{children}</Card>
-						</div>
+						{title && <h1 className="text-3xl font-bold mb-6">{title}</h1>}
+
+						<Card ref={scrollRef} className="overflow-y-auto max-h-[calc(100vh-6rem)] scrollbar-none">
+							{children}
+						</Card>
 					</div>
 				</div>
 			</div>
 
 			{/* Мобильное нижнее меню */}
-			<MobileBottomMenu items={menuItems} />
+			<MobileBottomMenu items={menuItems} scrollContainerRef={scrollRef} />
 		</motion.div>
 	)
 })
