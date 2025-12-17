@@ -1,10 +1,13 @@
+import { themeStore } from '@/shared/lib/theme'
 import { Card as AntCard, Typography, Space } from 'antd'
+import { observer } from 'mobx-react-lite'
 
-export const Step3Card = () => {
+export const Step3Card = observer(() => {
+	const isDark = themeStore.isDark
 	return (
 		<AntCard
 			style={{
-				background: '#131314',
+				background: isDark ? '#131314' : 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)',
 			}}
 		>
 			<Typography.Title level={3}>Шаг 3: Настройка параметров расчета</Typography.Title>
@@ -26,4 +29,4 @@ export const Step3Card = () => {
 			</Space>
 		</AntCard>
 	)
-}
+})

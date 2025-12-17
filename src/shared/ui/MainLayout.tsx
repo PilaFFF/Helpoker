@@ -33,7 +33,7 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 
 	return (
 		<motion.div
-			className="min-h-screen p-4 pb-24"
+			className="h-screen max-h-screen p-4"
 			style={{
 				background: isDark ? '#131314' : 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)',
 			}}
@@ -46,13 +46,23 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 					>
 						<MenuCircles items={menuItems} />
 					</motion.div>
-					<div className="flex-1 min-w-0">
+					<motion.div
+						className="flex-1 min-w-0"
+						animate={{
+							scale: [0.95, 1],
+							opacity: [0, 1],
+							transition: { duration: 0.1 },
+						}}
+					>
 						{title && <h1 className="text-3xl font-bold mb-6">{title}</h1>}
 
-						<Card ref={scrollRef} className="overflow-y-auto max-h-[calc(100vh-6rem)] scrollbar-none">
+						<Card
+							ref={scrollRef}
+							className="overflow-y-auto h-[calc(100vh-6rem)] max-h-[calc(100vh-6rem)] scrollbar-none"
+						>
 							{children}
 						</Card>
-					</div>
+					</motion.div>
 				</div>
 			</div>
 

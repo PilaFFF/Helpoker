@@ -42,7 +42,9 @@ const Player: FC<IProps> = ({
 	return (
 		<div className="w-full bg-black/30 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl">
 			<div className="text-center mb-6">
-				<div className="text-2xl font-medium text-white/90 truncate px-10">🔥 {getTrackName(selectedSong)}</div>
+				<div className="text-lg font-medium text-white/90 truncate md:px-10 md:text-3xl">
+					🔥 {getTrackName(selectedSong)}
+				</div>
 			</div>
 
 			<div className="mb-0">
