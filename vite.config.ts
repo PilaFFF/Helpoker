@@ -2,10 +2,52 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
-	plugins: [react(), tailwindcss(), TanStackRouterVite()],
+	plugins: [
+		react(),
+		tailwindcss(),
+		TanStackRouterVite(),
+		VitePWA({
+			registerType: 'autoUpdate',
+			devOptions: {
+				enabled: true, // SW работает даже в dev для удобного теста
+			},
+			manifest: {
+				name: 'Fast Dev App', // Замени на реальное название твоего приложения
+				short_name: 'FastDev',
+				description: 'МузЛото, Калькулятор, Теория и Тренировка',
+				theme_color: '#6366f1', // Подбери под свой дизайн (indigo-500)
+				background_color: '#ffffff',
+				display: 'standalone',
+				scope: '/',
+				start_url: '/',
+				icons: [
+					{
+						src: '/icons/icon-192x192.png',
+						sizes: '192x192',
+						type: 'image/png',
+					},
+					{
+						src: '/icons/icon-512x512.png',
+						sizes: '512x512',
+						type: 'image/png',
+					},
+					{
+						src: '/icons/icon-512x512.png',
+						sizes: '512x512',
+						type: 'image/png',
+						purpose: 'maskable',
+					},
+				],
+			},
+			workbox: {
+				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+			},
+		}),
+	],
 	resolve: {
 		alias: [{ find: '@', replacement: '/src' }],
 	},
