@@ -10,12 +10,11 @@ import { MenuCircles } from './MenuCircles'
 interface MainLayoutProps {
 	children: ReactNode
 	title?: string
-	showGoBack?: boolean
 }
 
 export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) => {
 	const isDark = themeStore.isDark
-	const scrollRef = useRef<HTMLDivElement | null>(null)
+	const scrollRef = useRef<HTMLDivElement>(null)
 
 	const menuItems = [
 		{ to: '/', icon: <span>🏠</span>, label: 'На главную' },
@@ -33,36 +32,38 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 
 	return (
 		<motion.div
-			className="h-screen max-h-screen p-4"
+			className="h-screen max-h-screen overflow-hidden flex flex-col"
 			style={{
 				background: isDark ? '#131314' : 'linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%)',
 			}}
 		>
-			<div className="max-w-7xl mx-auto">
-				<div className="flex gap-4">
-					<motion.div
-						className="sticky top-6 self-start flex-shrink-0 hidden md:block"
-						animate={{ scale: [0.95, 1], opacity: [0, 1], transition: { duration: 0.6 } }}
-					>
-						<MenuCircles items={menuItems} />
-					</motion.div>
-					<motion.div
-						className="flex-1 min-w-0"
-						animate={{
-							scale: [0.95, 1],
-							opacity: [0, 1],
-							transition: { duration: 0.1 },
-						}}
-					>
-						{title && <h1 className="text-3xl font-bold mb-6">{title}</h1>}
-
-						<Card
-							ref={scrollRef}
-							className="overflow-y-auto h-[calc(100vh-6rem)] max-h-[calc(100vh-6rem)] scrollbar-none"
+			{/* Основной контент с отступами */}
+			<div className="flex-1 overflow-hidden px-4 pt-4 pb-20 md:pb-4">
+				<div className="max-w-7xl mx-auto h-full">
+					<div className="flex gap-6 h-full">
+						{/* Левое меню на десктопе */}
+						<motion.div
+							className="sticky top-6 self-start flex-shrink-0 hidden md:block"
+							initial={{ scale: 0.95, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							transition={{ duration: 0.6 }}
 						>
-							{children}
-						</Card>
-					</motion.div>
+							<MenuCircles items={menuItems} />
+						</motion.div>
+
+						{/* Основной контент */}
+						<div className="flex-1 min-w-0 flex flex-col gap-6">
+							{title && <h1 className="text-3xl font-bold">{title}</h1>}
+
+							<Card
+								ref={scrollRef}
+								className="flex-1 overflow-y-auto scrollbar-none"
+								bodyStyle={{ padding: 0, height: '100%' }}
+							>
+								<div className="p-6 pb-8">{children}</div>
+							</Card>
+						</div>
+					</div>
 				</div>
 			</div>
 

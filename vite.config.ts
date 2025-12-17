@@ -11,40 +11,27 @@ export default defineConfig({
 		tailwindcss(),
 		TanStackRouterVite(),
 		VitePWA({
-			registerType: 'autoUpdate',
-			devOptions: {
-				enabled: true, // SW работает даже в dev для удобного теста
-			},
+			// ... остальное
 			manifest: {
-				name: 'Fast Dev App', // Замени на реальное название твоего приложения
-				short_name: 'FastDev',
-				description: 'МузЛото, Калькулятор, Теория и Тренировка',
-				theme_color: '#6366f1', // Подбери под свой дизайн (indigo-500)
-				background_color: '#ffffff',
-				display: 'standalone',
-				scope: '/',
-				start_url: '/',
+				// ... остальное
 				icons: [
 					{
-						src: '/icons/icon-192x192.png',
+						src: '/icons/192x192.png',
 						sizes: '192x192',
 						type: 'image/png',
 					},
 					{
-						src: '/icons/icon-512x512.png',
+						src: '/icons/512x512.png',
 						sizes: '512x512',
 						type: 'image/png',
 					},
 					{
-						src: '/icons/icon-512x512.png',
+						src: '/icons/512x512.png',
 						sizes: '512x512',
 						type: 'image/png',
 						purpose: 'maskable',
 					},
 				],
-			},
-			workbox: {
-				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
 			},
 		}),
 	],
