@@ -9,6 +9,11 @@ import { AnimatedBackground } from './components/AnimatedBackground'
 
 const STORAGE_KEY = 'musloto-game-state'
 
+type LottoItem = {
+	number: number
+	song: string
+}
+
 export const MuslotoPage = observer(() => {
 	const isDark = themeStore.isDark
 
@@ -19,7 +24,7 @@ export const MuslotoPage = observer(() => {
 	const [currentTime, setCurrentTime] = useState(0)
 	const [duration, setDuration] = useState(0)
 	const [isSeeking, setIsSeeking] = useState(false)
-	const [remainingItems, setRemainingItems] = useState(() => {
+	const [remainingItems, setRemainingItems] = useState<LottoItem[]>(() => {
 		// Загружаем состояние из localStorage при инициализации
 		const saved = localStorage.getItem(STORAGE_KEY)
 		if (saved) {
@@ -65,7 +70,7 @@ export const MuslotoPage = observer(() => {
 		}
 		const randomIndex = Math.floor(Math.random() * remainingItems.length)
 		const winner = remainingItems[randomIndex]
-		setRemainingItems((prev: any) => prev.filter((_, i) => i !== randomIndex))
+		setRemainingItems((prev) => prev.filter((_, i) => i !== randomIndex))
 		return winner
 	}
 
