@@ -6,6 +6,8 @@ import { useState, useEffect, useRef } from 'react'
 import { lottoItems as initialLottoItems } from '../const/lottoItems.const'
 import Player from './components/Player'
 
+const STORAGE_KEY = 'musloto-game-state'
+
 export const MuslotoPage = observer(() => {
 	const isDark = themeStore.isDark
 
@@ -16,11 +18,44 @@ export const MuslotoPage = observer(() => {
 	const [currentTime, setCurrentTime] = useState(0)
 	const [duration, setDuration] = useState(0)
 	const [isSeeking, setIsSeeking] = useState(false)
-	const [remainingItems, setRemainingItems] = useState(initialLottoItems.slice())
-	const [isGameOver, setIsGameOver] = useState(false)
+	const [remainingItems, setRemainingItems] = useState(() => {
+		// Загружаем состояние из localStorage при инициализации
+		const saved = localStorage.getItem(STORAGE_KEY)
+		if (saved) {
+			try {
+				const parsed = JSON.parse(saved)
+				return parsed.remainingItems || initialLottoItems.slice()
+			} catch {
+				return initialLottoItems.slice()
+			}
+		}
+		return initialLottoItems.slice()
+	})
+	const [isGameOver, setIsGameOver] = useState(() => {
+		// Загружаем состояние игры из localStorage
+		const saved = localStorage.getItem(STORAGE_KEY)
+		if (saved) {
+			try {
+				const parsed = JSON.parse(saved)
+				return parsed.isGameOver || false
+			} catch {
+				return false
+			}
+		}
+		return false
+	})
 
 	const audioRef = useRef<HTMLAudioElement>(null)
 	const intervalRef = useRef<number | null>(null)
+
+	// Сохраняем состояние в localStorage при изменении
+	useEffect(() => {
+		const gameState = {
+			remainingItems,
+			isGameOver,
+		}
+		localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState))
+	}, [remainingItems, isGameOver])
 
 	const pickWinner = () => {
 		if (remainingItems.length === 0) {
@@ -102,6 +137,8 @@ export const MuslotoPage = observer(() => {
 			audioRef.current.pause()
 			audioRef.current.currentTime = 0
 		}
+		// Очищаем localStorage
+		localStorage.removeItem(STORAGE_KEY)
 	}
 
 	useEffect(() => {
@@ -150,6 +187,11 @@ export const MuslotoPage = observer(() => {
 	return (
 		<MainLayout>
 			<div className="flex flex-col items-center justify-center gap-10 max-w-4xl mx-auto">
+				{/* Счетчик оставшихся песен */}
+				<div className={`text-xl font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+					Осталось бочонков: {remainingItems.length} из {initialLottoItems.length}
+				</div>
+
 				<motion.div
 					className={`text-9xl font-black tabular-nums ${isDark ? 'text-white' : 'text-gray-900'}`}
 					animate={isAnimating ? { rotate: [0, 360], scale: [1, 1.3, 1], opacity: [1, 0.7, 1] } : {}}
@@ -158,33 +200,41 @@ export const MuslotoPage = observer(() => {
 					{currentNumber ?? '?'}
 				</motion.div>
 
-				<button
-					onClick={startLotto}
-					disabled={isAnimating || isGameOver}
-					className={`
-            px-12 py-6 rounded-3xl text-2xl font-bold tracking-wider shadow-2xl
-            transition-all duration-300 transform
-            ${isAnimating || isGameOver ? 'opacity-60 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}
-            bg-gradient-to-r from-pink-500 to-violet-600 text-white
-          `}
-				>
-					{isAnimating ? 'КРУТИТСЯ...' : 'КРУТИТЬ БАРМАЛДУ!'}
-				</button>
+				<div className="flex gap-8 flex-wrap justify-center">
+					<button
+						onClick={startLotto}
+						disabled={isAnimating || isGameOver}
+						className={`
+							px-12 py-6 rounded-3xl text-2xl font-bold tracking-wider shadow-2xl
+							transition-all duration-300 transform
+							${isAnimating || isGameOver ? 'opacity-60 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}
+							bg-gradient-to-r from-pink-500 to-violet-600 text-white
+						`}
+					>
+						{isAnimating ? 'КРУТИТСЯ...' : 'КРУТИТЬ БУРМАЛДУ!'}
+					</button>
+
+					{/* Кнопка сброса */}
+					<button
+						onClick={resetGame}
+						className={`
+							px-8 py-4 rounded-2xl text-lg font-bold tracking-wider shadow-xl
+							transition-all duration-300 transform hover:scale-105 active:scale-95
+							bg-gradient-to-r from-red-500 to-orange-600 text-white
+						`}
+					>
+						СБРОС ИГРЫ
+					</button>
+				</div>
 
 				{isGameOver && (
 					<motion.div
 						initial={{ opacity: 0, scale: 0.8 }}
 						animate={{ opacity: 1, scale: 1 }}
 						transition={{ duration: 0.5, ease: 'easeOut' }}
-						className="text-4xl text-red-400 bg-white/20 backdrop-blur-md rounded-xl p-6 shadow-xl"
+						className="text-4xl text-red-400 bg-white/20 backdrop-blur-md rounded-xl p-6 shadow-xl text-center"
 					>
 						Все бочонки кончились! 🎉
-						<button
-							onClick={resetGame}
-							className="ml-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition-all hover:scale-105"
-						>
-							Новая игра
-						</button>
 					</motion.div>
 				)}
 

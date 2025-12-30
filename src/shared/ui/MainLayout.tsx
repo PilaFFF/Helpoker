@@ -58,7 +58,7 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 							<Card
 								ref={scrollRef}
 								className="flex-1 overflow-y-auto scrollbar-none"
-								bodyStyle={{ padding: 0, height: '100%' }}
+								styles={{ body: { padding: 0, height: '100%' } }}
 							>
 								<div className="p-6 pb-8">{children}</div>
 							</Card>
