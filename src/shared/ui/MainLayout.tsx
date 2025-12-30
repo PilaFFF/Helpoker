@@ -6,13 +6,15 @@ import { themeStore } from '@/shared/lib/theme'
 import { Card } from 'antd'
 import { MobileBottomMenu } from './MobileBottomMenu'
 import { MenuCircles } from './MenuCircles'
+import classNames from 'classnames'
 
 interface MainLayoutProps {
 	children: ReactNode
 	title?: string
+	withoutPadding?: boolean
 }
 
-export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) => {
+export const MainLayout: FC<MainLayoutProps> = observer(({ children, title, withoutPadding }) => {
 	const isDark = themeStore.isDark
 	const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -52,7 +54,12 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 						</motion.div>
 
 						{/* Основной контент */}
-						<div className="flex-1 min-w-0 flex flex-col gap-6">
+						<motion.div
+							className="flex-1 min-w-0 flex flex-col gap-6"
+							initial={{ scale: 0.95, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							transition={{ duration: 0.6 }}
+						>
 							{title && <h1 className="text-3xl font-bold">{title}</h1>}
 
 							<Card
@@ -60,9 +67,9 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title }) =>
 								className="flex-1 overflow-y-auto scrollbar-none"
 								styles={{ body: { padding: 0, height: '100%' } }}
 							>
-								<div className="p-6 pb-8">{children}</div>
+								<div className={classNames(!withoutPadding && 'p-6 pb-8')}>{children}</div>
 							</Card>
-						</div>
+						</motion.div>
 					</div>
 				</div>
 			</div>

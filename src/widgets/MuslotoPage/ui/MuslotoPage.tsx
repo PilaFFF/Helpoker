@@ -5,6 +5,7 @@ import { themeStore } from '@/shared/lib/theme'
 import { useState, useEffect, useRef } from 'react'
 import { lottoItems as initialLottoItems } from '../const/lottoItems.const'
 import Player from './components/Player'
+import { AnimatedBackground } from './components/AnimatedBackground'
 
 const STORAGE_KEY = 'musloto-game-state'
 
@@ -64,7 +65,7 @@ export const MuslotoPage = observer(() => {
 		}
 		const randomIndex = Math.floor(Math.random() * remainingItems.length)
 		const winner = remainingItems[randomIndex]
-		setRemainingItems((prev) => prev.filter((_, i) => i !== randomIndex))
+		setRemainingItems((prev: any) => prev.filter((_, i) => i !== randomIndex))
 		return winner
 	}
 
@@ -185,74 +186,85 @@ export const MuslotoPage = observer(() => {
 	}, [selectedSong])
 
 	return (
-		<MainLayout>
-			<div className="flex flex-col items-center justify-center gap-10 max-w-4xl mx-auto">
-				{/* Счетчик оставшихся песен */}
-				<div className={`text-xl font-semibold ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-					Осталось бочонков: {remainingItems.length} из {initialLottoItems.length}
-				</div>
+		<MainLayout withoutPadding>
+			<div className="relative min-h-screen">
+				<AnimatedBackground />
 
-				<motion.div
-					className={`text-9xl font-black tabular-nums ${isDark ? 'text-white' : 'text-gray-900'}`}
-					animate={isAnimating ? { rotate: [0, 360], scale: [1, 1.3, 1], opacity: [1, 0.7, 1] } : {}}
-					transition={{ duration: 0.25, ease: 'easeInOut', repeat: isAnimating ? Infinity : 0 }}
-				>
-					{currentNumber ?? '?'}
-				</motion.div>
-
-				<div className="flex gap-8 flex-wrap justify-center">
-					<button
-						onClick={startLotto}
-						disabled={isAnimating || isGameOver}
-						className={`
-							px-12 py-6 rounded-3xl text-2xl font-bold tracking-wider shadow-2xl
-							transition-all duration-300 transform
-							${isAnimating || isGameOver ? 'opacity-60 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}
-							bg-gradient-to-r from-pink-500 to-violet-600 text-white
-						`}
+				<div className="relative z-10 flex flex-col items-center justify-center gap-10 max-w-4xl mx-auto py-2">
+					<div
+						className={`text-xl font-semibold backdrop-blur-sm bg-white/10 px-4 py-2 rounded-lg ${isDark ? 'text-gray-300' : 'text-gray-700'}`}
 					>
-						{isAnimating ? 'КРУТИТСЯ...' : 'КРУТИТЬ БУРМАЛДУ!'}
-					</button>
+						Осталось бочонков: {remainingItems.length} из {initialLottoItems.length}
+					</div>
 
-					{/* Кнопка сброса */}
-					<button
-						onClick={resetGame}
-						className={`
-							px-8 py-4 rounded-2xl text-lg font-bold tracking-wider shadow-xl
-							transition-all duration-300 transform hover:scale-105 active:scale-95
-							bg-gradient-to-r from-red-500 to-orange-600 text-white
-						`}
-					>
-						СБРОС ИГРЫ
-					</button>
-				</div>
-
-				{isGameOver && (
 					<motion.div
-						initial={{ opacity: 0, scale: 0.8 }}
-						animate={{ opacity: 1, scale: 1 }}
-						transition={{ duration: 0.5, ease: 'easeOut' }}
-						className="text-4xl text-red-400 bg-white/20 backdrop-blur-md rounded-xl p-6 shadow-xl text-center"
+						className={`text-9xl font-black border border-gray-500 tabular-nums backdrop-blur-sm bg-white/5 px-8 py-4 rounded-3xl ${isDark ? 'text-white' : 'text-gray-900'}`}
+						animate={isAnimating ? { rotate: [0, 360], opacity: [1, 0.7, 1] } : {}}
+						transition={{ duration: 0.25, ease: 'easeInOut', repeat: isAnimating ? Infinity : 0 }}
 					>
-						Все бочонки кончились! 🎉
+						{currentNumber ?? '?'}
 					</motion.div>
-				)}
 
-				{selectedSong && !isGameOver && (
-					<Player
-						selectedSong={selectedSong}
-						stopMusic={stopMusic}
-						togglePlayPause={togglePlayPause}
-						setIsSeeking={setIsSeeking}
-						setCurrentTime={setCurrentTime}
-						isPlaying={isPlaying}
-						audioRef={audioRef}
-						currentTime={currentTime}
-						duration={duration}
-					/>
-				)}
+					<div className="flex gap-8 flex-wrap justify-center">
+						<button
+							onClick={startLotto}
+							disabled={isAnimating || isGameOver}
+							className={`
+								px-12 py-6 rounded-3xl text-2xl font-bold tracking-wider shadow-2xl
+								transition-all duration-300 transform backdrop-blur-sm
+								${isAnimating || isGameOver ? 'opacity-60 cursor-not-allowed' : 'hover:scale-110 active:scale-95'}
+								bg-gradient-to-r from-pink-500 to-violet-600 text-white
+							`}
+						>
+							{isAnimating ? 'КРУТИТСЯ...' : 'КРУТИТЬ БУРМАЛДУ!'}
+						</button>
 
-				<audio ref={audioRef} className="hidden" />
+						<button
+							onClick={resetGame}
+							className={`
+								px-8 py-4 rounded-2xl text-lg font-bold tracking-wider shadow-xl
+								transition-all duration-300 transform hover:scale-105 active:scale-95 backdrop-blur-sm
+								bg-gradient-to-r from-red-500 to-orange-600 text-white
+							`}
+						>
+							СБРОС ИГРЫ
+						</button>
+					</div>
+
+					{isGameOver && (
+						<motion.div
+							initial={{ opacity: 0, scale: 0.8 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ duration: 0.5, ease: 'easeOut' }}
+							className="text-4xl text-red-400 bg-white/20 backdrop-blur-md rounded-xl p-6 shadow-xl text-center"
+						>
+							Все бочонки кончились! 🎉
+						</motion.div>
+					)}
+
+					{selectedSong && !isGameOver && (
+						<motion.div
+							className="w-full"
+							initial={{ scale: 0.95, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							transition={{ duration: 0.6 }}
+						>
+							<Player
+								selectedSong={selectedSong}
+								stopMusic={stopMusic}
+								togglePlayPause={togglePlayPause}
+								setIsSeeking={setIsSeeking}
+								setCurrentTime={setCurrentTime}
+								isPlaying={isPlaying}
+								audioRef={audioRef}
+								currentTime={currentTime}
+								duration={duration}
+							/>
+						</motion.div>
+					)}
+
+					<audio ref={audioRef} className="hidden" />
+				</div>
 			</div>
 		</MainLayout>
 	)
