@@ -1,79 +1,89 @@
 import { motion } from 'framer-motion'
 import { observer } from 'mobx-react-lite'
+import { useMemo } from 'react'
 
 export const AnimatedBackground = observer(() => {
-	const garlandColors = ['bg-red-500', 'bg-green-500', 'bg-yellow-400', 'bg-blue-500', 'bg-pink-500', 'bg-amber-400']
+	const animationData = useMemo(() => {
+		const gradients = [
+			'bg-gradient-to-br from-pink-500/20 to-red-600/20',
+			'bg-gradient-to-br from-blue-500/20 to-cyan-500/20',
+			'bg-gradient-to-br from-green-500/20 to-emerald-500/20',
+			'bg-gradient-to-br from-yellow-400/20 to-orange-500/20',
+		]
 
-	const blobPositions = [
-		{ x: 10, y: 15 },
-		{ x: 75, y: 20 },
-		{ x: 30, y: 70 },
-		{ x: 85, y: 65 },
-		{ x: 50, y: 10 },
-		{ x: 15, y: 80 },
-		{ x: 60, y: 85 },
-		{ x: 90, y: 40 },
-	]
+		const blobs = [
+			{ x: 20, y: 20, size: 800, duration: 25, delay: 0 },
+			{ x: 70, y: 30, size: 700, duration: 30, delay: 5 },
+			{ x: 30, y: 70, size: 600, duration: 35, delay: 10 },
+			{ x: 80, y: 80, size: 640, duration: 28, delay: 15 },
+		].map((blob, i) => ({
+			...blob,
+			gradient: gradients[i],
+		}))
 
-	const blobs = blobPositions.map((pos, i) => ({
-		id: i,
-		size: Math.random() * 200 + 250,
-		initialX: pos.x,
-		initialY: pos.y,
-		duration: Math.random() * 30 + 30,
-		delay: i * 2,
-		color: garlandColors[i % garlandColors.length],
-	}))
+		const particleColors = ['bg-blue-500/60', 'bg-red-500/60', 'bg-green-500/60', 'bg-yellow-400/60']
+		const particles = Array.from({ length: 100 }, (_, i) => ({
+			id: i,
+			x: Math.random() * 100,
+			y: Math.random() * 100,
+			size: Math.random() * 8 + 4,
+			duration: Math.random() * 3 + 2,
+			delay: Math.random() * 2,
+			color: particleColors[i % particleColors.length],
+		}))
+
+		return { blobs, particles }
+	}, [])
 
 	return (
 		<div className="absolute inset-0 overflow-hidden pointer-events-none">
-			{blobs.map((blob) => (
+			{animationData.blobs.map((blob, i) => (
 				<motion.div
-					key={blob.id}
-					className={`absolute rounded-full blur-3xl opacity-25 ${blob.color}`}
+					key={`blob-${i}`}
+					className={`absolute rounded-full blur-sm opacity-30 ${blob.gradient}`}
 					style={{
 						width: blob.size,
 						height: blob.size,
-						left: `${blob.initialX}%`,
-						top: `${blob.initialY}%`,
+						left: `${blob.x}%`,
+						top: `${blob.y}%`,
+						transform: 'translate(-50%, -50%)',
+						willChange: 'transform',
 					}}
 					animate={{
-						x: [0, 80, -80, 60, 0],
-						y: [0, -60, 80, -40, 0],
-						scale: [1, 1.3, 0.9, 1.2, 1],
+						scale: [1, 1.1, 0.9, 1],
+						rotate: [0, 180, 360],
 					}}
 					transition={{
 						duration: blob.duration,
 						delay: blob.delay,
 						repeat: Infinity,
-						ease: 'easeInOut',
+						ease: 'linear',
 					}}
 				/>
 			))}
 
-			{Array.from({ length: 50 }, (_, i) => {
-				const color = garlandColors[i % garlandColors.length]
-				return (
-					<motion.div
-						key={`light-${i}`}
-						className={`absolute w-6 h-6 rounded-full blur-sm shadow-lg ${color}`}
-						style={{
-							left: `${Math.random() * 100}%`,
-							top: `${Math.random() * 100}%`,
-						}}
-						animate={{
-							opacity: [0.4, 1, 0.4],
-							scale: [1, 1.3, 1],
-						}}
-						transition={{
-							duration: Math.random() * 2 + 1.5,
-							delay: Math.random() * 2,
-							repeat: Infinity,
-							ease: 'easeInOut',
-						}}
-					/>
-				)
-			})}
+			{animationData.particles.map((particle) => (
+				<motion.div
+					key={`particle-${particle.id}`}
+					className={`absolute rounded-full ${particle.color}`}
+					style={{
+						width: particle.size,
+						height: particle.size,
+						left: `${particle.x}%`,
+						top: `${particle.y}%`,
+						willChange: 'opacity',
+					}}
+					animate={{
+						opacity: [0.2, 0.8, 0.2],
+					}}
+					transition={{
+						duration: particle.duration,
+						delay: particle.delay,
+						repeat: Infinity,
+						ease: 'linear',
+					}}
+				/>
+			))}
 		</div>
 	)
 })
