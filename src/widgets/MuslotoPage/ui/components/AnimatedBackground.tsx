@@ -12,10 +12,10 @@ export const AnimatedBackground = observer(() => {
 		]
 
 		const blobs = [
-			{ x: 20, y: 20, size: 800, duration: 25, delay: 0 },
-			{ x: 70, y: 30, size: 700, duration: 30, delay: 5 },
-			{ x: 30, y: 70, size: 600, duration: 35, delay: 10 },
-			{ x: 80, y: 80, size: 640, duration: 28, delay: 15 },
+			{ x: 0, y: 0, size: 800, duration: 25, delay: 0 },
+			{ x: 70, y: 10, size: 700, duration: 30, delay: 5 },
+			{ x: 0, y: 50, size: 600, duration: 35, delay: 10 },
+			{ x: 40, y: 40, size: 640, duration: 28, delay: 15 },
 		].map((blob, i) => ({
 			...blob,
 			gradient: gradients[i],
