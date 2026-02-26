@@ -20,6 +20,7 @@ import { Route as IndexImport } from './routes/index'
 const TrainingIndexLazyImport = createFileRoute('/training/')()
 const TheoryIndexLazyImport = createFileRoute('/theory/')()
 const MuslotoIndexLazyImport = createFileRoute('/musloto/')()
+const MortgageIndexLazyImport = createFileRoute('/mortgage/')()
 const LoginIndexLazyImport = createFileRoute('/login/')()
 const CalculatorIndexLazyImport = createFileRoute('/calculator/')()
 
@@ -50,6 +51,14 @@ const MuslotoIndexLazyRoute = MuslotoIndexLazyImport.update({
   path: '/musloto/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/musloto/index.lazy').then((d) => d.Route))
+
+const MortgageIndexLazyRoute = MortgageIndexLazyImport.update({
+  id: '/mortgage/',
+  path: '/mortgage/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() =>
+  import('./routes/mortgage/index.lazy').then((d) => d.Route),
+)
 
 const LoginIndexLazyRoute = LoginIndexLazyImport.update({
   id: '/login/',
@@ -90,6 +99,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginIndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/mortgage/': {
+      id: '/mortgage/'
+      path: '/mortgage'
+      fullPath: '/mortgage'
+      preLoaderRoute: typeof MortgageIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/musloto/': {
       id: '/musloto/'
       path: '/musloto'
@@ -120,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorIndexLazyRoute
   '/login': typeof LoginIndexLazyRoute
+  '/mortgage': typeof MortgageIndexLazyRoute
   '/musloto': typeof MuslotoIndexLazyRoute
   '/theory': typeof TheoryIndexLazyRoute
   '/training': typeof TrainingIndexLazyRoute
@@ -129,6 +146,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/calculator': typeof CalculatorIndexLazyRoute
   '/login': typeof LoginIndexLazyRoute
+  '/mortgage': typeof MortgageIndexLazyRoute
   '/musloto': typeof MuslotoIndexLazyRoute
   '/theory': typeof TheoryIndexLazyRoute
   '/training': typeof TrainingIndexLazyRoute
@@ -139,6 +157,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/calculator/': typeof CalculatorIndexLazyRoute
   '/login/': typeof LoginIndexLazyRoute
+  '/mortgage/': typeof MortgageIndexLazyRoute
   '/musloto/': typeof MuslotoIndexLazyRoute
   '/theory/': typeof TheoryIndexLazyRoute
   '/training/': typeof TrainingIndexLazyRoute
@@ -150,16 +169,25 @@ export interface FileRouteTypes {
     | '/'
     | '/calculator'
     | '/login'
+    | '/mortgage'
     | '/musloto'
     | '/theory'
     | '/training'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calculator' | '/login' | '/musloto' | '/theory' | '/training'
+  to:
+    | '/'
+    | '/calculator'
+    | '/login'
+    | '/mortgage'
+    | '/musloto'
+    | '/theory'
+    | '/training'
   id:
     | '__root__'
     | '/'
     | '/calculator/'
     | '/login/'
+    | '/mortgage/'
     | '/musloto/'
     | '/theory/'
     | '/training/'
@@ -170,6 +198,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CalculatorIndexLazyRoute: typeof CalculatorIndexLazyRoute
   LoginIndexLazyRoute: typeof LoginIndexLazyRoute
+  MortgageIndexLazyRoute: typeof MortgageIndexLazyRoute
   MuslotoIndexLazyRoute: typeof MuslotoIndexLazyRoute
   TheoryIndexLazyRoute: typeof TheoryIndexLazyRoute
   TrainingIndexLazyRoute: typeof TrainingIndexLazyRoute
@@ -179,6 +208,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CalculatorIndexLazyRoute: CalculatorIndexLazyRoute,
   LoginIndexLazyRoute: LoginIndexLazyRoute,
+  MortgageIndexLazyRoute: MortgageIndexLazyRoute,
   MuslotoIndexLazyRoute: MuslotoIndexLazyRoute,
   TheoryIndexLazyRoute: TheoryIndexLazyRoute,
   TrainingIndexLazyRoute: TrainingIndexLazyRoute,
@@ -197,6 +227,7 @@ export const routeTree = rootRoute
         "/",
         "/calculator/",
         "/login/",
+        "/mortgage/",
         "/musloto/",
         "/theory/",
         "/training/"
@@ -210,6 +241,9 @@ export const routeTree = rootRoute
     },
     "/login/": {
       "filePath": "login/index.lazy.tsx"
+    },
+    "/mortgage/": {
+      "filePath": "mortgage/index.lazy.tsx"
     },
     "/musloto/": {
       "filePath": "musloto/index.lazy.tsx"

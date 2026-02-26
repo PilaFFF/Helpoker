@@ -22,6 +22,7 @@ export const MainLayout: FC<MainLayoutProps> = observer(({ children, title, with
 		{ to: '/', icon: <span>🏠</span>, label: 'На главную' },
 		{ to: '/musloto', icon: <span>🔊</span>, label: 'МузЛото' },
 		{ to: '/calculator', icon: <span>📟</span>, label: 'Калькулятор' },
+		{ to: '/mortgage', icon: <span>🧮</span>, label: 'Калькулятор И' },
 		{ to: '/theory', icon: <span>📚</span>, label: 'Теория' },
 		{ to: '/training', icon: <span>🎯</span>, label: 'Тренировка' },
 		{
