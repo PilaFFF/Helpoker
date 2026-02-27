@@ -1,4 +1,4 @@
-import { Drawer, Tabs, Form, InputNumber, Typography, Radio } from 'antd'
+import { Drawer, Tabs, Form, InputNumber, Typography, Radio, Table } from 'antd'
 import { useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { themeStore } from '@/shared/lib/theme'
@@ -6,6 +6,7 @@ import classNames from 'classnames'
 import {
 	simpleInterest,
 	compoundInterest,
+	depositSchedule,
 	type CompoundFrequency,
 } from '@/shared/lib/deposit/calc'
 
@@ -67,6 +68,18 @@ export const DepositCalculatorDrawer = observer(
 		const taxPercent = state.taxPercent ?? 0
 		const interestAfterTax = result.interest * (1 - taxPercent / 100)
 		const totalAfterTax = state.principal + interestAfterTax
+
+		const scheduleRows = useMemo(
+			() =>
+				depositSchedule(
+					state.principal,
+					state.annualRate,
+					state.termMonths,
+					state.compoundFrequency,
+					state.activeTab === 'simple',
+				),
+			[state.principal, state.annualRate, state.termMonths, state.compoundFrequency, state.activeTab],
+		)
 
 		return (
 			<Drawer
@@ -172,6 +185,36 @@ export const DepositCalculatorDrawer = observer(
 						</div>
 					</div>
 				</div>
+
+				<Typography.Title level={5} className="!mt-6 !mb-2">
+					Начисление по месяцам
+				</Typography.Title>
+				<Table
+					size="small"
+					dataSource={scheduleRows.map((r) => ({ ...r, key: r.month }))}
+					columns={[
+						{ title: 'Месяц', dataIndex: 'month', key: 'month', width: 70, render: (v: number) => v },
+						{
+							title: 'Начислено за месяц',
+							dataIndex: 'interest',
+							key: 'interest',
+							render: (v: number) => formatMoney(v),
+						},
+						{
+							title: 'Остаток на конец',
+							dataIndex: 'balanceEnd',
+							key: 'balanceEnd',
+							render: (v: number) => formatMoney(v),
+						},
+					]}
+					pagination={{
+						pageSize: 12,
+						showSizeChanger: true,
+						pageSizeOptions: ['12', '24', '60', '120'],
+						showTotal: (total) => `Всего месяцев: ${total}`,
+					}}
+					scroll={{ x: 280 }}
+				/>
 			</Drawer>
 		)
 	},

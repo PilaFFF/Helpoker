@@ -1,9 +1,9 @@
 import { MainLayout, QuestionOutlined, DepositCalculatorDrawer } from '@/shared/ui'
 import type { DepositState } from '@/shared/ui/DepositCalculatorDrawer'
-import { Typography, InputNumber, Form, Table, Space, Tooltip, Button } from 'antd'
-import { useMemo, useState } from 'react'
+import { Typography, InputNumber, Form, Table, Space, Tooltip, Button, Checkbox } from 'antd'
+import { useMemo, useState, useCallback } from 'react'
 import { buildSchedule } from '@/shared/lib/mortgage/calc'
-import { simpleInterest, compoundInterest } from '@/shared/lib/deposit/calc'
+import { simpleInterest, compoundInterest, depositSchedule } from '@/shared/lib/deposit/calc'
 import { observer } from 'mobx-react-lite'
 import { themeStore } from '@/shared/lib/theme'
 import classNames from 'classnames'
@@ -19,6 +19,7 @@ export const MortgageCalculatorPage = observer(() => {
 	const [termYears, setTermYears] = useState(20)
 	const [downPayment, setDownPayment] = useState(0)
 	const [monthlyExtra, setMonthlyExtra] = useState(0)
+	const [useDepositInExtra, setUseDepositInExtra] = useState(false)
 	const [depositDrawerOpen, setDepositDrawerOpen] = useState(false)
 	const [depositState, setDepositState] = useState<DepositState>({
 		principal: 500_000,
@@ -44,15 +45,39 @@ export const MortgageCalculatorPage = observer(() => {
 	const taxPercent = depositState.taxPercent ?? 0
 	const depositInterestAfterTax = depositResult.interest * (1 - taxPercent / 100)
 
+	const depositScheduleRows = useMemo(
+		() =>
+			depositSchedule(
+				depositState.principal,
+				depositState.annualRate,
+				depositState.termMonths,
+				depositState.compoundFrequency,
+				depositState.activeTab === 'simple',
+			),
+		[depositState],
+	)
+
+	const getMonthlyExtra = useCallback(
+		(month: number) => {
+		const base = monthlyExtra
+		if (!useDepositInExtra || depositScheduleRows.length === 0) return base
+		const row = depositScheduleRows[month - 1]
+		const depositInterestThisMonth = row ? row.interest * (1 - taxPercent / 100) : 0
+		return base + depositInterestThisMonth
+		},
+		[monthlyExtra, useDepositInExtra, depositScheduleRows, taxPercent],
+	)
+
 	const result = useMemo(() => {
 		return buildSchedule({
 			totalAmount,
 			annualRatePercent: annualRate,
 			termYears,
 			downPayment,
-			monthlyExtra,
+			monthlyExtra: useDepositInExtra ? 0 : monthlyExtra,
+			getMonthlyExtra: useDepositInExtra ? getMonthlyExtra : undefined,
 		})
-	}, [totalAmount, annualRate, termYears, downPayment, monthlyExtra])
+	}, [totalAmount, annualRate, termYears, downPayment, monthlyExtra, useDepositInExtra, getMonthlyExtra])
 
 	const totalInterest = useMemo(() => result.schedule.reduce((acc, row) => acc + row.interest, 0), [result.schedule])
 	const totalPaidToBank = result.loanAmount + totalInterest
@@ -77,14 +102,20 @@ export const MortgageCalculatorPage = observer(() => {
 			title: (
 				<div>
 					<span>Всего в счёт тела</span>
-					<Tooltip title="Вся сумма, на которую уменьшается долг в этом месяце: часть из обязательного платежа + досрочка (если есть).">
+					<Tooltip title="Вся сумма, на которую уменьшается долг в этом месяце: часть из обязательного платежа + досрочка (свои средства и/или доход со вклада).">
 						<QuestionOutlined style={{ color: '#1777ff' }} />
 					</Tooltip>
 				</div>
 			),
 			key: 'toPrincipalTotal',
-			render: (_: unknown, row: { toPrincipal: number; extraPayment: number }) => {
+			render: (_: unknown, row: { month: number; toPrincipal: number; extraPayment: number }) => {
 				const total = row.toPrincipal + row.extraPayment
+				const depositRow = useDepositInExtra ? depositScheduleRows[row.month - 1] : null
+				const depositPart =
+					depositRow && row.extraPayment > 0
+						? Math.min(depositRow.interest * (1 - taxPercent / 100), row.extraPayment)
+						: 0
+				const manualPart = row.extraPayment - depositPart
 				return (
 					<div className="flex flex-wrap items-center gap-1">
 						<span
@@ -99,15 +130,45 @@ export const MortgageCalculatorPage = observer(() => {
 						{row.extraPayment > 0 && (
 							<>
 								<span className="opacity-60">+</span>
-								<span
-									className={classNames(
-										'rounded px-1.5 py-0.5 text-xs',
-										isDark ? 'bg-emerald-900/60 text-emerald-200' : 'bg-emerald-100 text-emerald-900',
-									)}
-									title="Досрочка"
-								>
-									{formatMoney(row.extraPayment)}
-								</span>
+								{depositPart > 0 && manualPart > 0 ? (
+									<>
+										<span
+											className={classNames(
+												'rounded px-1.5 py-0.5 text-xs',
+												isDark ? 'bg-emerald-900/60 text-emerald-200' : 'bg-emerald-100 text-emerald-900',
+											)}
+											title="Досрочка (свои)"
+										>
+											{formatMoney(manualPart)}
+										</span>
+										<span className="opacity-60">+</span>
+										<span
+											className={classNames(
+												'rounded px-1.5 py-0.5 text-xs',
+												isDark ? 'bg-amber-900/60 text-amber-200' : 'bg-amber-100 text-amber-900',
+											)}
+											title="Со вклада"
+										>
+											{formatMoney(depositPart)}
+										</span>
+									</>
+								) : (
+									<span
+										className={classNames(
+											'rounded px-1.5 py-0.5 text-xs',
+											depositPart > 0
+												? isDark
+													? 'bg-amber-900/60 text-amber-200'
+													: 'bg-amber-100 text-amber-900'
+												: isDark
+													? 'bg-emerald-900/60 text-emerald-200'
+													: 'bg-emerald-100 text-emerald-900',
+										)}
+										title={depositPart > 0 ? 'Досрочка со вклада' : 'Досрочка'}
+									>
+										{formatMoney(row.extraPayment)}
+									</span>
+								)}
 							</>
 						)}
 						<span className="font-medium ml-0.5">= {formatMoney(total)}</span>
@@ -228,7 +289,7 @@ export const MortgageCalculatorPage = observer(() => {
 								<strong className="tabular-nums">{formatMoney(Math.round(totalPaidToBank))} ₽</strong>
 							</div>
 							<div
-								className="grid pl-3 ml-3 border-l border-slate-200 dark:border-slate-600"
+								className="grid pl-3 ml-3 border-l border-slate-200 dark:border-slate-600 gap-y-1.5 items-baseline"
 								style={{ gridTemplateColumns: `${summaryLabelWidth} 1fr` }}
 							>
 								<span>Доход (вклад{taxPercent > 0 ? ', после налога' : ''}):</span>
@@ -237,6 +298,16 @@ export const MortgageCalculatorPage = observer(() => {
 								<strong className="tabular-nums">
 									{formatMoneyDeposit(depositState.principal + depositInterestAfterTax)} ₽
 								</strong>
+								<span className="col-span-2">
+									<Tooltip title="Ежемесячный доход по вкладу (после налога) будет добавляться к вашей досрочке: в каждом месяце — начисленные за этот месяц проценты.">
+										<Checkbox
+											checked={useDepositInExtra}
+											onChange={(e) => setUseDepositInExtra(e.target.checked)}
+										>
+											Учитывать доход вклада в досрочку
+										</Checkbox>
+									</Tooltip>
+								</span>
 								<Button
 									type="link"
 									size="small"
@@ -271,7 +342,13 @@ export const MortgageCalculatorPage = observer(() => {
 							<span
 								className={classNames('inline-block w-3 h-3 rounded', isDark ? 'bg-emerald-900/60' : 'bg-emerald-100')}
 							/>
-							Досрочка
+							Досрочка (свои)
+						</span>
+						<span className="flex items-center gap-1.5">
+							<span
+								className={classNames('inline-block w-3 h-3 rounded', isDark ? 'bg-amber-900/60' : 'bg-amber-100')}
+							/>
+							Со вклада
 						</span>
 					</div>
 					<Table
