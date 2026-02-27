@@ -43,8 +43,6 @@ export const MortgageCalculatorPage = observer(() => {
 
 	const taxPercent = depositState.taxPercent ?? 0
 	const depositInterestAfterTax = depositResult.interest * (1 - taxPercent / 100)
-	const monthlyDepositProfit = depositState.termMonths > 0 ? depositInterestAfterTax / depositState.termMonths : 0
-	const totalMonthlyExtra = monthlyExtra + monthlyDepositProfit
 
 	const result = useMemo(() => {
 		return buildSchedule({
@@ -52,28 +50,12 @@ export const MortgageCalculatorPage = observer(() => {
 			annualRatePercent: annualRate,
 			termYears,
 			downPayment,
-			monthlyExtra: totalMonthlyExtra,
+			monthlyExtra,
 		})
-	}, [totalAmount, annualRate, termYears, downPayment, totalMonthlyExtra])
+	}, [totalAmount, annualRate, termYears, downPayment, monthlyExtra])
 
 	const totalInterest = useMemo(() => result.schedule.reduce((acc, row) => acc + row.interest, 0), [result.schedule])
 	const totalPaidToBank = result.loanAmount + totalInterest
-
-	const resultWithoutDeposit = useMemo(
-		() =>
-			buildSchedule({
-				totalAmount,
-				annualRatePercent: annualRate,
-				termYears,
-				downPayment,
-				monthlyExtra,
-			}),
-		[totalAmount, annualRate, termYears, downPayment, monthlyExtra],
-	)
-	const totalPaidWithoutDeposit =
-		resultWithoutDeposit.loanAmount + resultWithoutDeposit.schedule.reduce((acc, row) => acc + row.interest, 0)
-	const monthsSaved = resultWithoutDeposit.totalMonths - result.totalMonths
-	const interestSaved = totalPaidWithoutDeposit - totalPaidToBank
 
 	const summaryLabelWidth = '11.5rem'
 
@@ -200,7 +182,7 @@ export const MortgageCalculatorPage = observer(() => {
 							label={
 								<div className="flex gap-1">
 									<span>Досрочка каждый месяц</span>
-									<Tooltip title="Сумма, которую ты платишь сверх ежемесячного платежа. К ней автоматически добавляется средняя прибыль со вклада (после налога).">
+									<Tooltip title="Сумма, которую вы платите сверх ежемесячного платежа в счёт тела кредита.">
 										<QuestionOutlined className="ml-1 opacity-70" style={{ color: '#1777ff' }} />
 									</Tooltip>
 								</div>
@@ -210,10 +192,8 @@ export const MortgageCalculatorPage = observer(() => {
 								className="w-full"
 								min={0}
 								step={0.01}
-								value={Number(totalMonthlyExtra.toFixed(2))}
-								onChange={(v) =>
-									setMonthlyExtra(Math.max(0, Math.round(((v ?? 0) - monthlyDepositProfit) * 100) / 100))
-								}
+								value={monthlyExtra}
+								onChange={(v) => setMonthlyExtra(Math.max(0, v ?? 0))}
 								formatter={(v) =>
 									v != null && String(v).trim() !== ''
 										? Number(v)
@@ -221,12 +201,12 @@ export const MortgageCalculatorPage = observer(() => {
 												.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 										: ''
 								}
-								parser={(v) => Math.round(Number(v?.replace(/\s/g, '') ?? 0) * 100) / 100}
+								parser={(v) => Number(v?.replace(/\s/g, '') ?? 0)}
 							/>
 						</Form.Item>
 					</Form>
 					<div className="mt-2 text-sm flex flex-col lg:flex-row gap-6">
-						<div className="flex-1 min-w-0">
+						<div className="flex justify-start gap-1 flex-1 min-w-0">
 							<div
 								className="grid gap-y-1.5 items-baseline"
 								style={{ gridTemplateColumns: `${summaryLabelWidth} 1fr` }}
@@ -248,7 +228,7 @@ export const MortgageCalculatorPage = observer(() => {
 								<strong className="tabular-nums">{formatMoney(Math.round(totalPaidToBank))} ₽</strong>
 							</div>
 							<div
-								className="grid gap-y-1.5 items-baseline mt-4 pt-3 border-t border-slate-200 dark:border-slate-600"
+								className="grid pl-3 ml-3 border-l border-slate-200 dark:border-slate-600"
 								style={{ gridTemplateColumns: `${summaryLabelWidth} 1fr` }}
 							>
 								<span>Доход (вклад{taxPercent > 0 ? ', после налога' : ''}):</span>
@@ -267,55 +247,6 @@ export const MortgageCalculatorPage = observer(() => {
 								</Button>
 							</div>
 						</div>
-						{monthlyDepositProfit > 0 && (
-							<div className={classNames('lg:border-l lg:pl-6 border-slate-200 dark:border-slate-600 flex-1 min-w-0')}>
-								<Typography.Text strong className="text-xs uppercase tracking-wide opacity-80">
-									С учётом прибыли вклада в досрочку
-								</Typography.Text>
-								<div
-									className="grid gap-y-1.5 items-baseline mt-2"
-									style={{ gridTemplateColumns: `${summaryLabelWidth} 1fr` }}
-								>
-									<span>Досрочка с вклада:</span>
-									<strong className="tabular-nums">{formatMoneyDeposit(monthlyDepositProfit)} ₽/мес</strong>
-									<span>Платёж в месяц:</span>
-									<span className="tabular-nums">
-										{formatMoney(Math.round(result.monthlyPayment))} ₽
-										<span className="text-xs opacity-75 ml-1">(без изменений)</span>
-									</span>
-									<span>Срок погашения:</span>
-									<div className="flex flex-col gap-0.5">
-										<strong className="tabular-nums">
-											{result.totalMonths} мес. (~{(result.totalMonths / 12).toFixed(1)} лет)
-										</strong>
-										{monthsSaved > 0 && (
-											<span
-												className={classNames(
-													'text-xs font-medium tabular-nums',
-													isDark ? 'text-emerald-400' : 'text-emerald-600',
-												)}
-											>
-												−{monthsSaved} мес.
-											</span>
-										)}
-									</div>
-									<span>Итого банку:</span>
-									<div className="flex flex-col gap-0.5">
-										<strong className="tabular-nums">{formatMoney(Math.round(totalPaidToBank))} ₽</strong>
-										{interestSaved > 0 && (
-											<span
-												className={classNames(
-													'text-xs font-medium tabular-nums',
-													isDark ? 'text-emerald-400' : 'text-emerald-600',
-												)}
-											>
-												Экономия −{formatMoney(Math.round(interestSaved))} ₽
-											</span>
-										)}
-									</div>
-								</div>
-							</div>
-						)}
 					</div>
 					<DepositCalculatorDrawer
 						open={depositDrawerOpen}
